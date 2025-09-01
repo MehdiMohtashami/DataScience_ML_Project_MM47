@@ -1,0 +1,1 @@
+{"feature_names": ["Recency", "Frequency", "Monetary", "Time", "donation_ratio", "avg_donation_amount", "recency_ratio"], "target_name": "donated blood"}

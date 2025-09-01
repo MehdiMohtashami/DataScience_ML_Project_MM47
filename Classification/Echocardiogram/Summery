@@ -1,0 +1,35 @@
+SVM (RBF) - Cross Validation Results:
+========================================
+F1-Score (Weighted) Mean: 0.918 (+/- 0.082)
+
+
+Final Model Ranking based on Weighted F1-Score from Cross-Validation:
+                     f1_weighted_mean  f1_weighted_std
+Random Forest                0.954148         0.022926
+Gradient Boosting            0.937971         0.038244
+SVM (RBF)                    0.917775         0.041239
+Logistic Regression          0.895688         0.017099
+
+
+Detailed Performance of Best Model (SVM) on Test Set:
+                     precision    recall  f1-score   support
+
+Did Not Survive (0)       0.25      1.00      0.40         1
+       Survived (1)       1.00      0.88      0.94        25
+
+           accuracy                           0.88        26
+          macro avg       0.62      0.94      0.67        26
+       weighted avg       0.97      0.88      0.92        26
+
+
+Gradient Boosting - Cross Validation Results:
+========================================
+F1-Score (Weighted) Mean: 0.938 (+/- 0.076)
+
+Random Forest - Cross Validation Results:
+========================================
+F1-Score (Weighted) Mean: 0.954 (+/- 0.046)
+
+Logistic Regression - Cross Validation Results:
+========================================
+F1-Score (Weighted) Mean: 0.896 (+/- 0.034)

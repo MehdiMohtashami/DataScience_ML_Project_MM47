@@ -1,0 +1,82 @@
+Removing previous joblib files...
+Creating optimized features based on importance analysis...
+Optimized dataset shape: (532, 10)
+Features: ['EM', 'EU', 'EM_EU_interaction', 'EM_lag1', 'EM_lag2', 'EU_lag2', 'EM_MA5', 'EU_MA5', 'EM_trend', 'EU_trend']
+
+============================================================
+CREATING ENSEMBLE MODEL
+============================================================
+Training and evaluating ensemble model...
+Ensemble CV Accuracy: 0.7600 (±0.1129)
+Ensemble Test Accuracy: 0.8411
+
+Ensemble Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.80      0.85      0.83        48
+           1       0.88      0.83      0.85        59
+
+    accuracy                           0.84       107
+   macro avg       0.84      0.84      0.84       107
+weighted avg       0.84      0.84      0.84       107
+
+
+============================================================
+COMPARISON WITH BASE MODELS
+============================================================
+Logistic Regression      : 0.8224
+SVC                      : 0.8224
+Gradient Boosting        : 0.8037
+Ensemble                 : 0.8411
+
+============================================================
+FEATURE IMPORTANCE ANALYSIS
+============================================================
+Feature Importance Scores:
+          feature  importance_mean  importance_std
+               EM         0.224299        0.029257
+               EU         0.062617        0.023662
+          EM_lag1         0.055140        0.016952
+         EM_trend         0.038318        0.017459
+           EU_MA5         0.037383        0.017732
+         EU_trend         0.032710        0.021002
+           EM_MA5         0.014019        0.012712
+EM_EU_interaction         0.011215        0.012399
+          EM_lag2         0.009346        0.014478
+          EU_lag2         0.001869        0.010066
+
+Saving the ensemble model and scaler...
+Ensemble model, scaler, and feature names saved successfully!
+
+============================================================
+FINAL ENSEMBLE MODEL INFORMATION
+============================================================
+Best single model: Logistic Regression with accuracy: 0.8224
+Ensemble model accuracy: 0.8411
+Improvement: 2.27%
+Number of features: 10
+Top 3 features: ['EM', 'EU', 'EM_lag1']
+
+Sample Predictions with Ensemble Model:
+ Actual  Predicted  Correct
+      1          1     True
+      1          1     True
+      0          0     True
+      1          1     True
+      0          0     True
+      1          1     True
+      1          1     True
+      1          1     True
+      0          0     True
+      1          1     True
+      1          1     True
+      0          0     True
+      0          0     True
+      1          0    False
+      1          1     True
+
+Sample Accuracy: 93.33%
+
+Prediction Probabilities for Sample Cases:
+
+Process finished with exit code 1

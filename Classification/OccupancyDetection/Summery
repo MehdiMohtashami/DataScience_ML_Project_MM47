@@ -1,0 +1,79 @@
+Logistic Regression Accuracy: 0.9895
+              precision    recall  f1-score   support
+
+           0       1.00      0.99      0.99      3162
+           1       0.96      0.99      0.98       950
+
+    accuracy                           0.99      4112
+   macro avg       0.98      0.99      0.99      4112
+weighted avg       0.99      0.99      0.99      4112
+
+--------------------------------------------------
+Decision Tree Accuracy: 0.9886
+              precision    recall  f1-score   support
+
+           0       0.99      0.99      0.99      3162
+           1       0.98      0.97      0.98       950
+
+    accuracy                           0.99      4112
+   macro avg       0.98      0.98      0.98      4112
+weighted avg       0.99      0.99      0.99      4112
+
+--------------------------------------------------
+Random Forest Accuracy: 0.9917
+              precision    recall  f1-score   support
+
+           0       1.00      0.99      0.99      3162
+           1       0.98      0.99      0.98       950
+
+    accuracy                           0.99      4112
+   macro avg       0.99      0.99      0.99      4112
+weighted avg       0.99      0.99      0.99      4112
+
+--------------------------------------------------
+SVM Accuracy: 0.9915
+              precision    recall  f1-score   support
+
+           0       1.00      0.99      0.99      3162
+           1       0.96      1.00      0.98       950
+
+    accuracy                           0.99      4112
+   macro avg       0.98      0.99      0.99      4112
+weighted avg       0.99      0.99      0.99      4112
+
+--------------------------------------------------
+K-Nearest Neighbors Accuracy: 0.9917
+              precision    recall  f1-score   support
+
+           0       0.99      0.99      0.99      3162
+           1       0.98      0.98      0.98       950
+
+    accuracy                           0.99      4112
+   macro avg       0.99      0.99      0.99      4112
+weighted avg       0.99      0.99      0.99      4112
+
+--------------------------------------------------
+Gradient Boosting Accuracy: 0.9900
+              precision    recall  f1-score   support
+
+           0       1.00      0.99      0.99      3162
+           1       0.97      0.99      0.98       950
+
+    accuracy                           0.99      4112
+   macro avg       0.98      0.99      0.99      4112
+weighted avg       0.99      0.99      0.99      4112
+
+--------------------------------------------------
+XGBoost Accuracy: 0.9929
+              precision    recall  f1-score   support
+
+           0       1.00      0.99      1.00      3162
+           1       0.98      0.99      0.98       950
+
+    accuracy                           0.99      4112
+   macro avg       0.99      0.99      0.99      4112
+weighted avg       0.99      0.99      0.99      4112
+
+--------------------------------------------------
+Cross-Validation Scores: [0.99452888 0.99270517 0.99483283 0.98905442 0.99543934]
+Mean CV Accuracy: 0.9933

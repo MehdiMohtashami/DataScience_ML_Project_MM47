@@ -1,0 +1,81 @@
+Logistic Regression:
+Accuracy: 0.7937
+CV Scores: 0.8216 (+/- 0.0319)
+              precision    recall  f1-score   support
+
+           0       0.81      0.92      0.86       402
+           1       0.72      0.51      0.59       170
+
+    accuracy                           0.79       572
+   macro avg       0.77      0.71      0.73       572
+weighted avg       0.79      0.79      0.78       572
+
+============================================================
+Random Forest:
+Accuracy: 0.9108
+CV Scores: 0.9200 (+/- 0.0460)
+              precision    recall  f1-score   support
+
+           0       0.93      0.95      0.94       402
+           1       0.87      0.83      0.85       170
+
+    accuracy                           0.91       572
+   macro avg       0.90      0.89      0.89       572
+weighted avg       0.91      0.91      0.91       572
+
+============================================================
+SVM:
+Accuracy: 0.8479
+CV Scores: 0.8680 (+/- 0.0243)
+              precision    recall  f1-score   support
+
+           0       0.88      0.91      0.89       402
+           1       0.77      0.69      0.73       170
+
+    accuracy                           0.85       572
+   macro avg       0.82      0.80      0.81       572
+weighted avg       0.84      0.85      0.85       572
+
+============================================================
+K-Nearest Neighbors:
+Accuracy: 0.8444
+CV Scores: 0.8596 (+/- 0.0164)
+              precision    recall  f1-score   support
+
+           0       0.88      0.90      0.89       402
+           1       0.75      0.71      0.73       170
+
+    accuracy                           0.84       572
+   macro avg       0.82      0.80      0.81       572
+weighted avg       0.84      0.84      0.84       572
+
+============================================================
+Gradient Boosting:
+Accuracy: 0.8899
+CV Scores: 0.9060 (+/- 0.0442)
+              precision    recall  f1-score   support
+
+           0       0.90      0.94      0.92       402
+           1       0.85      0.76      0.80       170
+
+    accuracy                           0.89       572
+   macro avg       0.88      0.85      0.86       572
+weighted avg       0.89      0.89      0.89       572
+
+============================================================
+Decision Tree:
+Accuracy: 0.8951
+CV Scores: 0.9143 (+/- 0.0453)
+              precision    recall  f1-score   support
+
+           0       0.92      0.93      0.93       402
+           1       0.83      0.81      0.82       170
+
+    accuracy                           0.90       572
+   macro avg       0.88      0.87      0.87       572
+weighted avg       0.89      0.90      0.89       572
+
+============================================================
+Best parameters: {'max_depth': 10, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 200}
+Best score: 0.9208584560404385
+Optimized Model Accuracy: 0.9038461538461539

@@ -1,0 +1,57 @@
+Dataset Shape: (1030, 9)
+
+Column Names: ['Cement', 'Blast Furnace Slag', 'Fly Ash', 'Water', 'Superplasticizer', 'Coarse Aggregate', 'Fine Aggregate', 'Age', 'Concrete compressive strength ']
+
+Missing Values:
+ Cement                            0
+Blast Furnace Slag                0
+Fly Ash                           0
+Water                             0
+Superplasticizer                  0
+Coarse Aggregate                  0
+Fine Aggregate                    0
+Age                               0
+Concrete compressive strength     0
+dtype: int64
+
+Data Types:
+ Cement                            float64
+Blast Furnace Slag                float64
+Fly Ash                           float64
+Water                             float64
+Superplasticizer                  float64
+Coarse Aggregate                  float64
+Fine Aggregate                    float64
+Age                                 int64
+Concrete compressive strength     float64
+dtype: object
+
+Column Names after stripping: ['Cement', 'Blast Furnace Slag', 'Fly Ash', 'Water', 'Superplasticizer', 'Coarse Aggregate', 'Fine Aggregate', 'Age', 'Concrete compressive strength']
+                   R2 Score         MSE       MAE
+XGBoost            0.917656   21.218048  2.996375
+Random Forest      0.884140   29.854417  3.736334
+Gradient Boosting  0.882889   30.176898  4.135014
+Decision Tree      0.834750   42.581023  4.293786
+K-Neighbors        0.714298   73.618692  6.800515
+SVR                0.654764   88.959415  7.514947
+Ridge              0.627576   95.965107  7.751967
+Linear Regression  0.627553   95.970940  7.745559
+Lasso              0.563917  112.368567  8.716247
+ElasticNet         0.514551  125.089072  9.232296
+XGBRegressor(base_score=None, booster=None, callbacks=None,
+             colsample_bylevel=None, colsample_bynode=None,
+             colsample_bytree=None, device=None, early_stopping_rounds=None,
+             enable_categorical=False, eval_metric=None, feature_types=None,
+             feature_weights=None, gamma=None, grow_policy=None,
+             importance_type=None, interaction_constraints=None,
+             learning_rate=None, max_bin=None, max_cat_threshold=None,
+             max_cat_to_onehot=None, max_delta_step=None, max_depth=None,
+             max_leaves=None, min_child_weight=None, missing=nan,
+             monotone_constraints=None, multi_strategy=None, n_estimators=None,
+             n_jobs=None, num_parallel_tree=None, ...)
+
+Best model: XGBoost
+R2 Score: 0.9177
+
+Cross-validation R2 scores for XGBoost: [0.92033112 0.914228   0.91892238 0.93062764 0.90894119]
+Mean CV R2 score: 0.9186 (+/- 0.0144)

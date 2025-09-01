@@ -1,0 +1,81 @@
+Random Forest Classifier (Classification - Pre-Tuning):
+Accuracy: 0.78
+              precision    recall  f1-score   support
+
+           0       0.78      0.99      0.87      6120
+           1       0.59      0.06      0.11      1809
+
+    accuracy                           0.78      7929
+   macro avg       0.69      0.53      0.49      7929
+weighted avg       0.74      0.78      0.70      7929
+
+
+Gradient Boosting Classifier (Classification - Pre-Tuning):
+Accuracy: 0.77
+              precision    recall  f1-score   support
+
+           0       0.78      0.98      0.87      6120
+           1       0.53      0.06      0.11      1809
+
+    accuracy                           0.77      7929
+   macro avg       0.66      0.52      0.49      7929
+weighted avg       0.72      0.77      0.70      7929
+
+
+XGBoost Classifier (Classification - Pre-Tuning):
+Accuracy: 0.70
+              precision    recall  f1-score   support
+
+           0       0.83      0.77      0.80      6120
+           1       0.37      0.46      0.41      1809
+
+    accuracy                           0.70      7929
+   macro avg       0.60      0.62      0.61      7929
+weighted avg       0.72      0.70      0.71      7929
+
+
+Feature Importance (XGBoost Classifier):
+                         Feature  Importance
+10                    kw_avg_avg    0.103132
+24                    is_weekend    0.070872
+13    self_reference_avg_sharess    0.063755
+11     self_reference_min_shares    0.047160
+8                     kw_min_avg    0.044120
+9                     kw_max_avg    0.039918
+4          data_channel_is_world    0.039709
+7                     kw_avg_max    0.037330
+21                imgs_per_token    0.036891
+6                     kw_avg_min    0.034984
+0                      num_hrefs    0.034776
+19  abs_title_sentiment_polarity    0.034505
+20               hrefs_per_token    0.034219
+12     self_reference_max_shares    0.033604
+14                        LDA_02    0.033498
+15                        LDA_03    0.033363
+3           average_token_length    0.033021
+16           global_subjectivity    0.033006
+22              videos_per_token    0.032928
+2                     num_videos    0.032009
+23                   keyword_avg    0.031477
+1                       num_imgs    0.030873
+5                     kw_max_min    0.030448
+18            title_subjectivity    0.027234
+17         avg_negative_polarity    0.027168
+
+Important Features: ['kw_avg_avg', 'is_weekend', 'self_reference_avg_sharess', 'self_reference_min_shares', 'kw_min_avg', 'kw_max_avg', 'data_channel_is_world', 'kw_avg_max', 'imgs_per_token', 'kw_avg_min', 'num_hrefs', 'abs_title_sentiment_polarity', 'hrefs_per_token', 'self_reference_max_shares', 'LDA_02', 'LDA_03', 'average_token_length', 'global_subjectivity', 'videos_per_token', 'num_videos', 'keyword_avg', 'num_imgs', 'kw_max_min', 'title_subjectivity', 'avg_negative_polarity']
+
+Best Parameters for XGBoost Classification: {'learning_rate': 0.1, 'max_depth': 5, 'n_estimators': 150}
+Improved Accuracy (XGBoost Classification): 0.69
+              precision    recall  f1-score   support
+
+           0       0.85      0.73      0.78      6120
+           1       0.38      0.57      0.46      1809
+
+    accuracy                           0.69      7929
+   macro avg       0.62      0.65      0.62      7929
+weighted avg       0.74      0.69      0.71      7929
+
+
+Model saved successfully!
+
+Process finished with exit code 0

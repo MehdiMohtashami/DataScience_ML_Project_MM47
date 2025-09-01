@@ -1,0 +1,80 @@
+==================================================
+MODEL TRAINING AND COMPARISON
+==================================================
+Logistic Regression:
+  Accuracy: 0.9709
+  CV Mean Accuracy: 0.9836
+------------------------------
+Support Vector Machine:
+  Accuracy: 1.0000
+  CV Mean Accuracy: 1.0000
+------------------------------
+Random Forest:
+  Accuracy: 0.9964
+  CV Mean Accuracy: 0.9945
+------------------------------
+Gradient Boosting:
+  Accuracy: 0.9964
+  CV Mean Accuracy: 0.9927
+------------------------------
+K-Nearest Neighbors:
+  Accuracy: 1.0000
+  CV Mean Accuracy: 0.9982
+------------------------------
+Gaussian Naive Bayes:
+  Accuracy: 0.8582
+  CV Mean Accuracy: 0.8368
+------------------------------
+Decision Tree:
+  Accuracy: 0.9927
+  CV Mean Accuracy: 0.9872
+------------------------------
+XGBoost:
+  Accuracy: 0.9964
+  CV Mean Accuracy: 0.9964
+------------------------------
+
+==================================================
+MODEL COMPARISON RESULTS
+==================================================
+Models sorted by Accuracy:
+                 Model  Accuracy  CV Mean
+Support Vector Machine  1.000000 1.000000
+   K-Nearest Neighbors  1.000000 0.998178
+     Gradient Boosting  0.996364 0.992707
+         Random Forest  0.996364 0.994529
+               XGBoost  0.996364 0.996355
+         Decision Tree  0.992727 0.987231
+   Logistic Regression  0.970909 0.983591
+  Gaussian Naive Bayes  0.858182 0.836800
+
+
+==================================================
+DETAILED EVALUATION OF BEST MODEL: Support Vector Machine
+==================================================
+
+Classification Report:
+              precision    recall  f1-score   support
+
+  Forged (0)       1.00      1.00      1.00       153
+ Genuine (1)       1.00      1.00      1.00       122
+
+    accuracy                           1.00       275
+   macro avg       1.00      1.00      1.00       275
+weighted avg       1.00      1.00      1.00       275
+
+
+==================================================
+SUMMARY
+==================================================
+Based on our analysis, the best model for this dataset is: Support Vector Machine
+With an accuracy of: 1.0000
+Feature Importance (Random Forest):
+                                 feature  importance
+0  Variance of Wavelet Transformed Image    0.557394
+1  Skewness of Wavelet Transformed Image    0.235673
+2  Curtosis of Wavelet Transformed Image    0.147710
+3                       Entropy of Image    0.059224
+SVM - CV Scores: 1.0000 (±0.0000)
+KNN - CV Scores: 0.9982 (±0.0036)
+Random Forest - CV Scores: 0.9945 (±0.0073)

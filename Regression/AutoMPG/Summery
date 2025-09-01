@@ -1,0 +1,21 @@
+Linear Regression - R2: 0.8613, MAE: 2.1842, RMSE: 2.7306
+Ridge Regression - R2: 0.8641, MAE: 2.1601, RMSE: 2.7027
+Lasso Regression - R2: 0.8472, MAE: 2.2757, RMSE: 2.8661
+ElasticNet - R2: 0.8333, MAE: 2.3386, RMSE: 2.9942
+Decision Tree - R2: 0.7130, MAE: 2.7556, RMSE: 3.9283
+Random Forest - R2: 0.8372, MAE: 2.1710, RMSE: 2.9586
+Gradient Boosting - R2: 0.8378, MAE: 2.0860, RMSE: 2.9527
+XGBoost - R2: 0.8425, MAE: 2.0639, RMSE: 2.9098
+Support Vector - R2: 0.8241, MAE: 2.1066, RMSE: 3.0755
+
+Model evaluation results:
+            Model  R2 Score      MAE     RMSE
+ Ridge Regression  0.864143 2.160130 2.702690
+Linear Regression  0.861319 2.184214 2.730639
+ Lasso Regression  0.847214 2.275738 2.866137
+          XGBoost  0.842519 2.063948 2.909845
+Gradient Boosting  0.837841 2.085966 2.952743
+    Random Forest  0.837196 2.171019 2.958613
+       ElasticNet  0.833253 2.338551 2.994230
+   Support Vector  0.824081 2.106580 3.075471
+    Decision Tree  0.712984 2.755612 3.928333

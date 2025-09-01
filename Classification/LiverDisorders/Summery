@@ -1,0 +1,23 @@
+Shape after IQR: (264, 7)
+Selector_encoded distribution:
+ Selector_encoded
+1    149
+0    115
+Name: count, dtype: int64
+Selected features: ['Alkphos', 'Sgpt', 'Sgot', 'Gammagt', 'Drinks', 'Sgpt_Sgot_ratio', 'Gammagt_Alkphos_ratio', 'Sgpt_Gammagt']
+After SMOTE, train Selector_encoded distribution:
+ Selector_encoded
+1    126
+0    126
+Name: count, dtype: int64
+Best params: {'max_depth': 10, 'min_samples_leaf': 2, 'min_samples_split': 2, 'n_estimators': 300}
+Best CV score: 0.7779607843137255
+Final Model (Selector as Label): Accuracy = 0.70, F1 = 0.70
+
+=== گزارش نهایی برای پروژه کلاسی ===
+دیتاست: BUPA Liver Disorders (بعد از حذف outliers: 264 نمونه)
+ویژگی‌های انتخاب‌شده: ['Alkphos', 'Sgpt', 'Sgot', 'Gammagt', 'Drinks', 'Sgpt_Sgot_ratio', 'Gammagt_Alkphos_ratio', 'Sgpt_Gammagt']
+مدل: Random Forest با بهترین پارامترها: {'max_depth': 10, 'min_samples_leaf': 2, 'min_samples_split': 2, 'n_estimators': 300}
+دقت Cross-Validation: 0.78
+دقت روی Test Set: 0.70
+F1 Score: 0.70

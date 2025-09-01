@@ -1,0 +1,42 @@
+===============================================ALGORITHM MODELS====================
+
+Logistic Regression Accuracy: 0.9800
+--------------------------------------------------
+K-Nearest Neighbors Accuracy: 0.9850
+--------------------------------------------------
+Linear SVM Accuracy: 0.9850
+--------------------------------------------------
+RBF SVM Accuracy: 0.9775
+--------------------------------------------------
+Decision Tree Accuracy: 0.9725
+--------------------------------------------------
+Random Forest Accuracy: 0.9825
+
+Detailed Classification Report for Random Forest:
+              precision    recall  f1-score   support
+
+           1       0.99      0.99      0.99       100
+           2       1.00      0.96      0.98       100
+           3       0.94      1.00      0.97       100
+           4       1.00      0.98      0.99       100
+
+    accuracy                           0.98       400
+   macro avg       0.98      0.98      0.98       400
+weighted avg       0.98      0.98      0.98       400
+
+--------------------------------------------------
+Gradient Boosting Accuracy: 0.9725
+--------------------------------------------------
+Naive Bayes Accuracy: 0.9850
+--------------------------------------------------
+
+Model Comparison based on Accuracy:
+                 Model  Accuracy
+1  K-Nearest Neighbors    0.9850
+2           Linear SVM    0.9850
+7          Naive Bayes    0.9850
+5        Random Forest    0.9825
+0  Logistic Regression    0.9800
+3              RBF SVM    0.9775
+4        Decision Tree    0.9725
+6    Gradient Boosting    0.9725

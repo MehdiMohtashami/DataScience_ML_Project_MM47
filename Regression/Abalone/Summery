@@ -1,0 +1,36 @@
+CV R² Scores: ['0.574', '0.544', '0.517', '0.550', '0.518']
+CV R² Mean: 0.541
+=== GradientBoosting ===
+Train R²: 0.845 (84.5%)
+Test R²: 0.548 (54.8%)
+Test MAE: 1.547
+Test RMSE: 2.198
+
+=== XGBoost (Regularized) ===
+Train R²: 0.848 (84.8%)
+Test R²: 0.570 (57.0%)
+Test MAE: 1.515
+Test RMSE: 2.144
+
+=== RandomForest (Regularized) ===
+Train R²: 0.784 (78.4%)
+Test R²: 0.577 (57.7%)
+Test MAE: 1.481
+Test RMSE: 2.125
+
+=== Ensemble ===
+Train R²: 0.830 (83.0%)
+Test R²: 0.571 (57.1%)
+Test MAE: 1.505
+Test RMSE: 2.142
+
+==================================================
+مقایسه نهایی مدل‌ها:
+==================================================
+              Model     R² R² (%)    MAE   RMSE
+2      RandomForest  0.577  57.7%  1.481  2.125
+3          Ensemble  0.571  57.1%  1.505  2.142
+1           XGBoost  0.570  57.0%  1.515  2.144
+0  GradientBoosting  0.548  54.8%  1.547  2.198
+
+بهترین مدل: RandomForest

@@ -1,0 +1,68 @@
+Logistic Regression: 0.850 (+/- 0.085)
+KNN: 0.838 (+/- 0.050)
+Decision Tree: 0.825 (+/- 0.108)
+Random Forest: 0.875 (+/- 0.068)
+SVM: 0.875 (+/- 0.000)
+XGBoost: 0.863 (+/- 0.061)
+
+
+============================================================
+DETAILED CROSS-VALIDATION RESULTS
+============================================================
+SVM:
+  Mean Accuracy: 0.875 (+/- 0.000)
+  All CV scores: ['0.875', '0.875', '0.875', '0.875', '0.875', '0.875', '0.875', '0.875', '0.875', '0.875']
+
+Random Forest:
+  Mean Accuracy: 0.850 (+/- 0.075)
+  All CV scores: ['0.875', '0.875', '0.875', '0.875', '0.750', '0.875', '0.750', '0.875', '1.000', '0.750']
+
+============================================================
+HYPERPARAMETER TUNING
+============================================================
+SVM Best Parameters: {'C': 0.1, 'gamma': 'scale', 'kernel': 'rbf'}
+SVM Best CV Score: 0.875
+Random Forest Best Parameters: {'max_depth': None, 'min_samples_leaf': 2, 'min_samples_split': 2, 'n_estimators': 50}
+Random Forest Best CV Score: 0.8875
+============================================================
+FINAL MODEL EVALUATION
+============================================================
+SVM Test Accuracy: 0.9
+Random Forest Test Accuracy: 0.9
+
+SVM Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.90      1.00      0.95        18
+           1       0.00      0.00      0.00         2
+
+    accuracy                           0.90        20
+   macro avg       0.45      0.50      0.47        20
+weighted avg       0.81      0.90      0.85        20
+
+Random Forest Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.90      1.00      0.95        18
+           1       0.00      0.00      0.00         2
+
+    accuracy                           0.90        20
+   macro avg       0.45      0.50      0.47        20
+weighted avg       0.81      0.90      0.85        20
+
+============================================================
+FEATURE IMPORTANCE ANALYSIS
+============================================================
+Feature Importance:
+                              Feature  Importance
+                                  Age    0.256459
+Number of hours spent sitting per day    0.183171
+                               Season    0.148373
+     Frequency of alcohol consumption    0.100355
+                        Smoking Habit    0.092910
+           Accident or serious trauma    0.075967
+             High fevers in last year    0.057263
+                Surgical intervention    0.056139
+                    Childish Diseases    0.029361
+
+Best model saved: SVC

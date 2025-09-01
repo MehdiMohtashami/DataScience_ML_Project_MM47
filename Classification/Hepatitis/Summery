@@ -1,0 +1,40 @@
+        Age  Bilirubin  Alk Phosphate  ...  Ascites  Varices  Histology
+0  0.539321   2.778433       0.381895  ...      1.0      1.0        2.0
+1 -0.175504  -0.079008      -0.531902  ...      2.0      2.0        1.0
+2 -1.684579   0.737404       0.930174  ...      2.0      2.0        1.0
+3 -0.572629  -0.650496      -1.506619  ...      2.0      2.0        1.0
+4  1.333571   0.002634       1.437839  ...      2.0      2.0        1.0
+
+[5 rows x 19 columns]
+
+Missing values in processed training set: 0
+Logistic Regression  | Cross-Val Accuracy: 0.799 (+/- 0.173)
+K-Nearest Neighbors  | Cross-Val Accuracy: 0.879 (+/- 0.086)
+Decision Tree        | Cross-Val Accuracy: 0.799 (+/- 0.174)
+Random Forest        | Cross-Val Accuracy: 0.863 (+/- 0.066)
+Gradient Boosting    | Cross-Val Accuracy: 0.790 (+/- 0.059)
+SVM                  | Cross-Val Accuracy: 0.815 (+/- 0.128)
+Fitting 5 folds for each of 27 candidates, totalling 135 fits
+Best parameters: {'classifier__max_depth': None, 'classifier__min_samples_split': 10, 'classifier__n_estimators': 100}
+Best cross-validation score: 0.871
+Test Set Accuracy: 0.8064516129032258
+
+Classification Report:
+               precision    recall  f1-score   support
+
+           1       0.50      0.33      0.40         6
+           2       0.85      0.92      0.88        25
+
+    accuracy                           0.81        31
+   macro avg       0.68      0.63      0.64        31
+weighted avg       0.78      0.81      0.79        31
+
+Training KNN on full training data...
+Training Tuned Random Forest on full training data...
+KNN model saved as 'hepatitis_knn_model.pkl'
+Random Forest model saved as 'hepatitis_rf_model.pkl'
+Preprocessor saved as 'hepatitis_preprocessor.pkl'
+
+Both models are ready for use in a UI or any other application!
+The model predicts: LIVE
+Confidence: 60.00%

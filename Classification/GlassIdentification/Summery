@@ -1,0 +1,28 @@
+Logistic Regression: Mean Accuracy = 0.6024, Std = 0.0542
+KNN: Mean Accuracy = 0.6264, Std = 0.0707
+SVM Linear: Mean Accuracy = 0.6025, Std = 0.0619
+SVM RBF: Mean Accuracy = 0.6671, Std = 0.0606
+Decision Tree: Mean Accuracy = 0.6202, Std = 0.0794
+Random Forest: Mean Accuracy = 0.7667, Std = 0.0636
+Naive Bayes: Mean Accuracy = 0.4339, Std = 0.1131
+Accuracy on test set: 0.7441860465116279
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           1       0.69      0.79      0.73        14
+           2       0.77      0.67      0.71        15
+           3       0.50      0.33      0.40         3
+           5       0.75      1.00      0.86         3
+           6       0.67      1.00      0.80         2
+           7       1.00      0.83      0.91         6
+
+    accuracy                           0.74        43
+   macro avg       0.73      0.77      0.74        43
+weighted avg       0.75      0.74      0.74        43
+
+Best parameters: {'max_depth': 10, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 50}
+Best cross-validation score: 0.7956302521008404
+Tuned Model Accuracy: 0.8604651162790697
+SMOTE Model Accuracy: 0.7441860465116279
+XGBoost Accuracy: 0.7674418604651163

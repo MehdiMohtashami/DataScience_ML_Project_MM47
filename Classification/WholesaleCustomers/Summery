@@ -1,0 +1,6 @@
+Best Parameters for Logistic Regression: {'C': 10, 'penalty': 'l1', 'solver': 'liblinear'}
+Best Cross-Validation Accuracy: 0.92
+Test Accuracy: 0.93
+Test Error Rate: 0.07
+Logistic Regression model and scaler saved as joblib files.
+K-Means Silhouette Score: 0.38

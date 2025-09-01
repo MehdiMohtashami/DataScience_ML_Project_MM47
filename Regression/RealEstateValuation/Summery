@@ -1,0 +1,28 @@
+Linear Regression: R² = 0.6811, RMSE = 7.3148
+Ridge: R² = 0.6814, RMSE = 7.3108
+Lasso: R² = 0.6838, RMSE = 7.2837
+Decision Tree: R² = 0.6038, RMSE = 8.1530
+Random Forest: R² = 0.8059, RMSE = 5.7059
+Gradient Boosting: R² = 0.7964, RMSE = 5.8443
+XGBoost: R² = 0.7688, RMSE = 6.2283
+                         R2      RMSE
+Random Forest      0.805930  5.705880
+Gradient Boosting  0.796402  5.844276
+XGBoost            0.768768  6.228269
+Lasso              0.683764  7.283654
+Ridge              0.681399  7.310848
+Linear Regression  0.681058  7.314754
+Decision Tree      0.603770  8.153002
+Best parameters: {'max_depth': 13, 'min_samples_leaf': 5, 'min_samples_split': 3, 'n_estimators': 439}
+Best R²: 0.6681
+Tuned Random Forest R² on Test Set: 0.8207
+Feature Importances:
+X3 distance to the nearest MRT station    0.660747
+X2 house age                              0.142343
+X5 latitude                               0.117629
+X6 longitude                              0.039166
+X1 transaction date                       0.028213
+X4 number of convenience stores           0.011903
+dtype: float64
+
+Process finished with exit code 0

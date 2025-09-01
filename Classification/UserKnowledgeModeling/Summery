@@ -1,0 +1,103 @@
+Columns after stripping whitespace: ['STG', 'SCG', 'STR', 'LPR', 'PEG', 'UNS']
+
+================================================== EXPLORATORY DATA ANALYSIS ==================================================
+Dataset Shape: (258, 6)
+
+First 5 rows:
+    STG   SCG   STR   LPR   PEG       UNS
+0  0.00  0.00  0.00  0.00  0.00  very_low
+1  0.08  0.08  0.10  0.24  0.90      High
+2  0.06  0.06  0.05  0.25  0.33       Low
+3  0.10  0.10  0.15  0.65  0.30    Middle
+4  0.08  0.08  0.08  0.98  0.24       Low
+
+Dataset Info:
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 258 entries, 0 to 257
+Data columns (total 6 columns):
+ #   Column  Non-Null Count  Dtype
+---  ------  --------------  -----
+ 0   STG     258 non-null    float64
+ 1   SCG     258 non-null    float64
+ 2   STR     258 non-null    float64
+ 3   LPR     258 non-null    float64
+ 4   PEG     258 non-null    float64
+ 5   UNS     258 non-null    object
+dtypes: float64(5), object(1)
+memory usage: 12.2+ KB
+None
+
+Descriptive Statistics:
+              STG         SCG         STR         LPR         PEG
+count  258.000000  258.000000  258.000000  258.000000  258.000000
+mean     0.371147    0.355674    0.468004    0.432713    0.458539
+std      0.210271    0.211962    0.245940    0.248108    0.255211
+min      0.000000    0.000000    0.000000    0.000000    0.000000
+25%      0.240750    0.210000    0.291250    0.250000    0.250000
+50%      0.327000    0.302500    0.490000    0.330000    0.500000
+75%      0.495000    0.497500    0.690000    0.647500    0.660000
+max      0.990000    0.900000    0.950000    0.990000    0.930000
+
+Target Variable ('UNS') Distribution:
+UNS
+Middle      88
+Low         83
+High        63
+very_low    24
+Name: count, dtype: int64
+
+================================================== DATA VISUALIZATION ==================================================
+
+================================================== DATA PREPROCESSING ==================================================
+Target Class Mapping: {'High': np.int64(0), 'Low': np.int64(1), 'Middle': np.int64(2), 'very_low': np.int64(3)}
+Training set size: 206
+Testing set size: 52
+
+================================================== MODEL COMPARISON ==================================================
+Logistic Regression  | Accuracy: 0.9231 | F1-Score: 0.8925
+k-NN                 | Accuracy: 0.7308 | F1-Score: 0.7104
+Linear SVM           | Accuracy: 0.9615 | F1-Score: 0.9681
+RBF SVM              | Accuracy: 0.8654 | F1-Score: 0.8106
+Decision Tree        | Accuracy: 0.9231 | F1-Score: 0.9196
+Random Forest        | Accuracy: 0.9615 | F1-Score: 0.9681
+Gradient Boosting    | Accuracy: 0.9038 | F1-Score: 0.9031
+Naive Bayes          | Accuracy: 0.8654 | F1-Score: 0.8824
+
+============================== FINAL RANKING ==============================
+                     Accuracy  F1-Score
+Linear SVM           0.961538  0.968099
+Random Forest        0.961538  0.968099
+Decision Tree        0.923077  0.919569
+Logistic Regression  0.923077  0.892471
+Gradient Boosting    0.903846  0.903117
+RBF SVM              0.865385  0.810561
+Naive Bayes          0.865385  0.882432
+k-NN                 0.730769  0.710401
+
+================================================== DETAILED ANALYSIS OF TOP MODEL ==================================================
+Top Performing Model: Linear SVM
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        High       1.00      0.92      0.96        12
+         Low       0.94      1.00      0.97        17
+      Middle       0.94      0.94      0.94        18
+    very_low       1.00      1.00      1.00         5
+
+    accuracy                           0.96        52
+   macro avg       0.97      0.97      0.97        52
+weighted avg       0.96      0.96      0.96        52
+
+
+================================================== HYPERPARAMETER TUNING (Optional) ==================================================
+
+================================================== CLUSTERING EXPLORATION (K-Means) ==================================================
+
+Cross-Tabulation: True Labels vs K-Means Clusters
+KMeans_Cluster   0   1   2   3
+True_Label
+0               16  12   1  22
+1                8  19  32   7
+2               20  19   7  24
+3                0   3  16   0

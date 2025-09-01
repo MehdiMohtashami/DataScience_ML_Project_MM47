@@ -1,0 +1,59 @@
+# ------------ Python basics ------------
+__pycache__/
+*.py[cod]
+*.pyd
+*.so
+*.dylib
+.ipynb_checkpoints/
+.mypy_cache/
+.pytest_cache/
+
+# ------------ Virtual envs ------------
+.env
+.env.*
+.venv/
+venv/
+env/
+
+# ------------ IDE / OS junk ------------
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# ------------ Logs / builds ------------
+*.log
+build/
+dist/
+*.egg-info/
+
+# ------------ Data files (datasets) ------------
+# پروژهٔ تو کلی CSV و TXT دیتاست دارد؛ همه‌شان را نادیده می‌گیریم
+**/*.csv
+**/*.data
+**/*.txt
+**/*.tsv
+**/*.xlsx
+**/*.xls
+
+# ------------ ML artifacts (models & checkpoints) ------------
+**/*.pkl
+**/*.joblib
+**/*.h5
+**/*.pt
+**/*.onnx
+**/*.sav
+**/*.pickle
+checkpoints/
+models/
+outputs/
+runs/
+wandb/
+lightning_logs/
+
+# ------------ Caches ------------
+.cache/
+*.cache
+tmp/
+temp/

@@ -1,0 +1,11 @@
+               Model       MAE      RMSE        R²
+2      Random Forest  0.354674  0.490798  0.997689
+3  Gradient Boosting  0.386133  0.515083  0.997455
+1      Decision Tree  0.424831  0.620645  0.996304
+0  Linear Regression  2.182073  3.025427  0.912185
+5     Neural Network  2.925727  3.855443  0.857391
+4     SVM Regression  4.233338  5.654384  0.693262
+Best Parameters: {'max_depth': 10, 'min_samples_split': 2, 'n_estimators': 100}
+Cross-Validation R² Scores: [0.84143361 0.99602039 0.9967792  0.99640129 0.99426987]
+Mean CV R²: 0.9650
+Final MAE: 0.3563, R²: 0.9977

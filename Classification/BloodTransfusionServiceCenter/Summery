@@ -1,0 +1,32 @@
+=== Logistic Regression ===
+CV ROC AUC: 0.7471 (± 0.0421)
+Test Accuracy: 0.7000
+Test ROC AUC: 0.7721
+Test F1 Score: 0.5631
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.92      0.67      0.77       114
+           1       0.43      0.81      0.56        36
+
+    accuracy                           0.70       150
+   macro avg       0.67      0.74      0.67       150
+weighted avg       0.80      0.70      0.72       150
+
+
+====== SVM ======
+CV ROC AUC: 0.7273 (± 0.0379)
+Test Accuracy: 0.7333
+Test ROC AUC: 0.7850
+Test F1 Score: 0.5556
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.89      0.75      0.81       114
+           1       0.46      0.69      0.56        36
+
+    accuracy                           0.73       150
+   macro avg       0.67      0.72      0.68       150
+weighted avg       0.78      0.73      0.75       150

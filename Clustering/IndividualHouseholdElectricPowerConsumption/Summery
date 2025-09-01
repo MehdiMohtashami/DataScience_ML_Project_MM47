@@ -1,0 +1,72 @@
+ستون‌های دیتاست:
+Index(['Date', 'Time', 'Global_active_power', 'Global_reactive_power',
+       'Voltage', 'Global_intensity', 'Sub_metering_1', 'Sub_metering_2',
+       'Sub_metering_3'],
+      dtype='object')
+
+چند ردیف اول دیتاست:
+         Date      Time  ...  Sub_metering_2  Sub_metering_3
+0  16/12/2006  17:24:00  ...             1.0            17.0
+1  16/12/2006  17:25:00  ...             1.0            16.0
+2  16/12/2006  17:26:00  ...             2.0            17.0
+3  16/12/2006  17:27:00  ...             1.0            17.0
+4  16/12/2006  17:28:00  ...             1.0            17.0
+5  16/12/2006  17:29:00  ...             2.0            17.0
+6  16/12/2006  17:30:00  ...             1.0            17.0
+7  16/12/2006  17:31:00  ...             1.0            17.0
+8  16/12/2006  17:32:00  ...             1.0            17.0
+9  16/12/2006  17:33:00  ...             2.0            16.0
+
+[10 rows x 9 columns]
+مدل KMeans با K=4 ذخیره شد.
+
+میانگین ویژگی‌ها در هر خوشه:
+         Global_active_power  Sub_metering_1  Sub_metering_2  Sub_metering_3
+Cluster
+0                   2.828296       18.190659        1.462150       11.383089
+1                   1.756446        0.585788        0.696607       16.667083
+2                   0.601476        0.257502        0.503692        1.475160
+3                   3.059062        2.201142       24.407155       10.233825
+
+واریانس ویژگی‌ها در خوشه‌ها:
+Global_active_power: Cluster
+0    0.932370
+1    0.370247
+2    0.251719
+3    1.085177
+Name: Global_active_power, dtype: float64
+Sub_metering_1: Cluster
+0    56.122468
+1     3.724978
+2     1.830405
+3    24.532818
+Name: Sub_metering_1, dtype: float64
+Sub_metering_2: Cluster
+0    12.053024
+1     3.114672
+2     1.301335
+3    68.254990
+Name: Sub_metering_2, dtype: float64
+Sub_metering_3: Cluster
+0    52.164068
+1     8.511960
+2     4.843229
+3    58.745315
+Name: Sub_metering_3, dtype: float64
+Linear Regression: MAE=0.2791, RMSE=0.3552, CV_RMSE=0.4730
+Ridge: MAE=0.2791, RMSE=0.3552, CV_RMSE=0.4730
+Lasso: MAE=0.2958, RMSE=0.3650, CV_RMSE=0.5021
+Decision Tree: MAE=0.2773, RMSE=0.3719, CV_RMSE=0.4973
+Random Forest: MAE=0.2692, RMSE=0.3564, CV_RMSE=0.4816
+
+بهترین مدل (بر اساس CV_RMSE): Ridge با CV_RMSE=0.4730
+
+Feature importance برای Random Forest:
+Global_reactive_power: 0.0093
+Voltage: 0.0090
+Sub_metering_1: 0.2058
+Sub_metering_2: 0.1530
+Sub_metering_3: 0.6229
+مدل Random Forest ذخیره شد.
+
+

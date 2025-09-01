@@ -1,0 +1,35 @@
+تعداد داده‌های hour: (17379, 17)
+تعداد داده‌های day: (731, 16)
+Linear Regression:
+  RMSE: 139.20, MAE: 104.79, R2: 0.3881
+
+Ridge Regression:
+  RMSE: 139.20, MAE: 104.79, R2: 0.3881
+
+Lasso Regression:
+  RMSE: 139.20, MAE: 104.76, R2: 0.3881
+
+Random Forest:
+  RMSE: 41.57, MAE: 24.65, R2: 0.9454
+
+Gradient Boosting:
+  RMSE: 67.23, MAE: 45.72, R2: 0.8572
+
+XGBoost:
+  RMSE: 38.97, MAE: 24.40, R2: 0.9520
+
+SVR:
+  RMSE: 139.57, MAE: 91.17, R2: 0.3848
+
+                            MSE        RMSE         MAE        R2
+XGBoost             1518.937012   38.973542   24.401592  0.952032
+Random Forest       1727.835417   41.567240   24.649416  0.945435
+Gradient Boosting   4520.414171   67.234025   45.723897  0.857244
+Lasso Regression   19375.716634  139.196683  104.763693  0.388111
+Linear Regression  19375.741503  139.196773  104.790882  0.388110
+Ridge Regression   19375.777603  139.196902  104.790762  0.388109
+SVR                19480.712267  139.573322   91.170367  0.384795
+
+بهترین پارامترها: {'max_depth': 20, 'min_samples_split': 2, 'n_estimators': 300}
+بهترین امتیاز: 0.9435940580789893
+مدل نهایی - RMSE: 41.38, R2: 0.9459

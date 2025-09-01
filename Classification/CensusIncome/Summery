@@ -1,0 +1,91 @@
+Logistic Regression Accuracy: 0.8254
+              precision    recall  f1-score   support
+
+           0       0.85      0.94      0.89     12435
+           1       0.70      0.45      0.55      3846
+
+    accuracy                           0.83     16281
+   macro avg       0.78      0.70      0.72     16281
+weighted avg       0.81      0.83      0.81     16281
+
+--------------------------------------------------
+Decision Tree Accuracy: 0.8071
+              precision    recall  f1-score   support
+
+           0       0.88      0.87      0.87     12435
+           1       0.59      0.61      0.60      3846
+
+    accuracy                           0.81     16281
+   macro avg       0.73      0.74      0.74     16281
+weighted avg       0.81      0.81      0.81     16281
+
+--------------------------------------------------
+Random Forest Accuracy: 0.8546
+              precision    recall  f1-score   support
+
+           0       0.89      0.93      0.91     12435
+           1       0.73      0.61      0.67      3846
+
+    accuracy                           0.85     16281
+   macro avg       0.81      0.77      0.79     16281
+weighted avg       0.85      0.85      0.85     16281
+
+--------------------------------------------------
+Gradient Boosting Accuracy: 0.8668
+              precision    recall  f1-score   support
+
+           0       0.88      0.95      0.92     12435
+           1       0.79      0.59      0.68      3846
+
+    accuracy                           0.87     16281
+   macro avg       0.84      0.77      0.80     16281
+weighted avg       0.86      0.87      0.86     16281
+
+--------------------------------------------------
+XGBoost Accuracy: 0.8725
+              precision    recall  f1-score   support
+
+           0       0.90      0.94      0.92     12435
+           1       0.77      0.66      0.71      3846
+
+    accuracy                           0.87     16281
+   macro avg       0.83      0.80      0.81     16281
+weighted avg       0.87      0.87      0.87     16281
+
+--------------------------------------------------
+SVM Accuracy: 0.8512
+              precision    recall  f1-score   support
+
+           0       0.87      0.95      0.91     12435
+           1       0.76      0.55      0.63      3846
+
+    accuracy                           0.85     16281
+   macro avg       0.81      0.75      0.77     16281
+weighted avg       0.84      0.85      0.84     16281
+
+--------------------------------------------------
+K-Nearest Neighbors Accuracy: 0.8286
+              precision    recall  f1-score   support
+
+           0       0.87      0.91      0.89     12435
+           1       0.66      0.58      0.61      3846
+
+    accuracy                           0.83     16281
+   macro avg       0.77      0.74      0.75     16281
+weighted avg       0.82      0.83      0.82     16281
+
+--------------------------------------------------
+در حال تنظیم هیپرپارامترهای XGBoost...
+Fitting 3 folds for each of 36 candidates, totalling 108 fits
+بهترین پارامترهای XGBoost: {'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 200, 'subsample': 1.0}
+بهترین امتیاز XGBoost: 0.8648648648648649
+دقت نهایی XGBoost: 0.8717
+              precision    recall  f1-score   support
+
+           0       0.89      0.95      0.92     12435
+           1       0.79      0.62      0.70      3846
+
+    accuracy                           0.87     16281
+   macro avg       0.84      0.79      0.81     16281
+weighted avg       0.87      0.87      0.87     16281
+
