@@ -18,31 +18,25 @@
 # from sklearn.preprocessing import StandardScaler
 # from sklearn.metrics import mean_squared_error, r2_score, accuracy_score, classification_report
 #
-# # مدل‌های Regression
 # from sklearn.linear_model import LinearRegression, Ridge, Lasso
 # from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 # from sklearn.svm import SVR
 # from sklearn.neighbors import KNeighborsRegressor
 #
-# # مدل‌های Classification
 # from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 # from sklearn.svm import SVC
 # from sklearn.neighbors import KNeighborsClassifier
 #
-# # بارگذاری داده‌ها
 # df = pd.read_csv('data_akbilgic.csv')
 #
-# # بررسی اولیه داده‌ها
 # print("Dataset Shape:", df.shape)
 # print("\nMissing Values:")
 # print(df.isnull().sum())
 # print("\nData Types:")
 # print(df.dtypes)
 #
-# # تبدیل تاریخ به فرمت مناسب (اگر لازم باشد)
 # df['date'] = pd.to_datetime(df['date'], format='%d-%b-%y')
 #
-# # بررسی همبستگی
 # plt.figure(figsize=(12, 8))
 # correlation_matrix = df.corr(numeric_only=True)
 # sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0)
@@ -50,7 +44,6 @@
 # plt.tight_layout()
 # plt.show()
 #
-# # تحلیل ویژگی‌ها
 # plt.figure(figsize=(15, 10))
 # for i, column in enumerate(df.columns[1:], 1):
 #     plt.subplot(3, 4, i)
@@ -59,23 +52,18 @@
 # plt.tight_layout()
 # plt.show()
 #
-# # تعریف ویژگی‌ها و هدف
-# X = df.drop(['date', 'ISE', 'ISE.1'], axis=1)  # حذف تاریخ و یکی از هدف‌ها
-# y_regression = df['ISE.1']  # برای Regression
+# X = df.drop(['date', 'ISE', 'ISE.1'], axis=1)
+# y_regression = df['ISE.1']
 #
-# # برای Classification: ایجاد هدف جدید (1 اگر بازدهی مثبت، 0 اگر منفی)
 # y_classification = (df['ISE.1'] > 0).astype(int)
 #
-# # تقسیم داده‌ها
 # X_train, X_test, y_train_reg, y_test_reg = train_test_split(X, y_regression, test_size=0.2, random_state=42)
 # _, _, y_train_cls, y_test_cls = train_test_split(X, y_classification, test_size=0.2, random_state=42)
 #
-# # استانداردسازی
 # scaler = StandardScaler()
 # X_train_scaled = scaler.fit_transform(X_train)
 # X_test_scaled = scaler.transform(X_test)
 #
-# # مقایسه مدل‌های Regression
 # regression_models = {
 #     'Linear Regression': LinearRegression(),
 #     'Ridge Regression': Ridge(alpha=1.0),
@@ -102,7 +90,6 @@
 #
 #     print(f"{name:20s} | MSE: {mse:.6f} | R2 Score: {r2:.4f}")
 #
-# # مقایسه مدل‌های Classification
 # classification_models = {
 #     'Random Forest Classifier': RandomForestClassifier(n_estimators=100, random_state=42),
 #     'Gradient Boosting Classifier': GradientBoostingClassifier(n_estimators=100, random_state=42),
@@ -125,17 +112,14 @@
 #
 #     print(f"{name:30s} | Accuracy: {accuracy:.4f}")
 #
-#     # نمایش گزارش دقیق‌تر برای بهترین مدل
 #     if accuracy == max([result['Accuracy'] for result in classification_results.values()]):
 #         best_cls_report = classification_report(y_test_cls, y_pred)
 #         print(f"Classification Report for {name}:")
 #         print(best_cls_report)
 #
-# # پیدا کردن بهترین مدل Regression
 # best_reg_model = min(regression_results.items(), key=lambda x: x[1]['MSE'])
 # print(f"\nBest Regression Model: {best_reg_model[0]} with MSE: {best_reg_model[1]['MSE']:.6f}")
 #
-# # نمایش اهمیت ویژگی‌ها برای مدل‌های ensemble
 # if hasattr(regression_models['Random Forest'], 'feature_importances_'):
 #     feature_importance = regression_models['Random Forest'].feature_importances_
 #     feature_names = X.columns
@@ -148,11 +132,9 @@
 #     plt.tight_layout()
 #     plt.show()
 #
-# # پیش‌بینی با بهترین مدل
 # best_model = regression_models[best_reg_model[0]]
 # predictions = best_model.predict(X_test_scaled)
 #
-# # نمایش نتایج پیش‌بینی
 # results_df = pd.DataFrame({
 #     'Actual': y_test_reg.values,
 #     'Predicted': predictions,
@@ -162,7 +144,6 @@
 # print("\nSample Predictions:")
 # print(results_df.head(10).to_string())
 #
-# # نمایش scatter plot پیش‌بینی‌ها vs مقادیر واقعی
 # plt.figure(figsize=(10, 6))
 # plt.scatter(y_test_reg, predictions, alpha=0.6)
 # plt.plot([y_test_reg.min(), y_test_reg.max()], [y_test_reg.min(), y_test_reg.max()], 'r--', lw=2)
@@ -186,7 +167,6 @@ import joblib
 import time
 import os
 
-# حذف فایل‌های joblib قبلی
 print("Removing previous joblib files...")
 joblib_files = ['optimized_final_model.pkl', 'final_scaler.pkl', 'feature_names.pkl',
                 'ensemble_model.pkl', 'ensemble_scaler.pkl', 'ensemble_features.pkl']
@@ -195,87 +175,85 @@ for file in joblib_files:
         os.remove(file)
         print(f"Removed {file}")
 
-# بارگذاری داده‌ها
 df = pd.read_csv('data_akbilgic.csv')
 
-# تبدیل تاریخ به فرمت مناسب
 df['date'] = pd.to_datetime(df['date'], format='%d-%b-%y')
 
 print("Creating optimized features based on importance analysis...")
 
-# 1. استفاده از ویژگی‌های مهم و حذف ویژگی‌های کم‌اهمیت
+#1. Use important features and eliminate unimportant ones
 X_optimized = df[['EM', 'EU']].copy()
 
-# 2. ایجاد ویژگی تعاملی
+#2. Create an interactive feature
 X_optimized['EM_EU_interaction'] = X_optimized['EM'] * X_optimized['EU']
 
-# 3. ایجاد ویژگی‌های lag (تأخیری) فقط برای ویژگی‌های مهم
+#3. Create lag features only for important features
 X_optimized['EM_lag1'] = X_optimized['EM'].shift(1)
 X_optimized['EM_lag2'] = X_optimized['EM'].shift(2)
 X_optimized['EU_lag2'] = X_optimized['EU'].shift(2)  # فقط lag2 برای EU
 
-# 4. ایجاد moving averages
+#4. Create moving averages
 X_optimized['EM_MA5'] = X_optimized['EM'].rolling(window=5).mean()
 X_optimized['EU_MA5'] = X_optimized['EU'].rolling(window=5).mean()
 
-# 5. ایجاد ویژگی‌های ترند جدید
+#5. Creating new trending features
 X_optimized['EM_trend'] = X_optimized['EM'] - X_optimized['EM_lag1']
 X_optimized['EU_trend'] = X_optimized['EU'] - X_optimized['EU_lag2']
 
-# حذف مقادیر NaN ناشی از lag و moving average
+# Remove NaN values ​​caused by lag and moving average
 X_optimized = X_optimized.dropna()
 
-# تطبیق هدف با ویژگی‌های جدید
+# Adapting the goal to new features
 y_optimized = (df['ISE.1'] > 0).astype(int)
 y_optimized = y_optimized.iloc[len(y_optimized) - len(X_optimized):]
 
-# تنظیم مجدد ایندکس‌ها
+# Reset indexes
 X_optimized = X_optimized.reset_index(drop=True)
 y_optimized = y_optimized.reset_index(drop=True)
 
 print(f"Optimized dataset shape: {X_optimized.shape}")
 print(f"Features: {list(X_optimized.columns)}")
 
-# تقسیم داده‌ها
+# Data division
 X_train, X_test, y_train, y_test = train_test_split(
     X_optimized, y_optimized, test_size=0.2, random_state=42, stratify=y_optimized
 )
 
-# استانداردسازی
+# Standardization
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# ایجاد مدل Ensemble
+# Create Ensemble model
 print("\n" + "=" * 60)
 print("CREATING ENSEMBLE MODEL")
 print("=" * 60)
 
-# تعریف مدل‌های پایه
+# Definition of basic models
 base_models = {
     'Logistic Regression': LogisticRegression(C=100, solver='liblinear', random_state=42),
     'SVC': SVC(C=10, kernel='linear', probability=True, random_state=42),
     'Gradient Boosting': GradientBoostingClassifier(n_estimators=100, random_state=42)
 }
 
-# ایجاد Ensemble Model
+# Create Ensemble Model
 ensemble_model = VotingClassifier(
     estimators=[(name, model) for name, model in base_models.items()],
     voting='soft',
     n_jobs=-1
 )
 
-# آموزش و ارزیابی مدل Ensemble
+# Training and evaluating the Ensemble model
 print("Training and evaluating ensemble model...")
 
 # Cross-Validation
 cv_scores = cross_val_score(ensemble_model, X_train_scaled, y_train, cv=5, scoring='accuracy')
 print(f"Ensemble CV Accuracy: {cv_scores.mean():.4f} (±{cv_scores.std() * 2:.4f})")
 
-# آموزش نهایی
+# Final training
 ensemble_model.fit(X_train_scaled, y_train)
 
-# پیش‌بینی
+# Forecast
 y_pred_ensemble = ensemble_model.predict(X_test_scaled)
 ensemble_accuracy = accuracy_score(y_test, y_pred_ensemble)
 
@@ -283,7 +261,6 @@ print(f"Ensemble Test Accuracy: {ensemble_accuracy:.4f}")
 print("\nEnsemble Classification Report:")
 print(classification_report(y_test, y_pred_ensemble))
 
-# مقایسه با مدل‌های تکی
 print("\n" + "=" * 60)
 print("COMPARISON WITH BASE MODELS")
 print("=" * 60)
@@ -298,7 +275,6 @@ for name, model in base_models.items():
 
 print(f"{'Ensemble':25s}: {ensemble_accuracy:.4f}")
 
-# تحلیل اهمیت ویژگی‌ها برای Ensemble
 print("\n" + "=" * 60)
 print("FEATURE IMPORTANCE ANALYSIS")
 print("=" * 60)
@@ -318,7 +294,6 @@ print(feature_importance_df.to_string(index=False))
 # Visualization
 plt.figure(figsize=(18, 12))
 
-# نمودار اهمیت ویژگی‌ها
 plt.subplot(2, 3, 1)
 colors = plt.cm.viridis(np.linspace(0, 1, len(feature_importance_df)))
 bars = plt.barh(feature_importance_df['feature'], feature_importance_df['importance_mean'],
@@ -327,7 +302,6 @@ plt.xlabel('Permutation Importance')
 plt.title('Feature Importance (Permutation)')
 plt.gca().invert_yaxis()
 
-# نمودار مقایسه مدل‌ها
 plt.subplot(2, 3, 2)
 models = list(base_results.keys()) + ['Ensemble']
 accuracies = list(base_results.values()) + [ensemble_accuracy]
@@ -341,7 +315,6 @@ for bar, accuracy in zip(bars, accuracies):
              f'{accuracy:.3f}', ha='center', va='bottom')
 plt.xticks(rotation=45)
 
-# نمودار confusion matrix
 plt.subplot(2, 3, 3)
 cm = confusion_matrix(y_test, y_pred_ensemble)
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
@@ -351,7 +324,6 @@ plt.xlabel('Predicted')
 plt.ylabel('Actual')
 plt.title('Confusion Matrix - Ensemble')
 
-# نمودار cross-validation scores
 plt.subplot(2, 3, 4)
 plt.plot(range(1, 6), cv_scores, 'o-', label='CV Scores')
 plt.axhline(y=cv_scores.mean(), color='r', linestyle='--', label=f'Mean: {cv_scores.mean():.3f}')
@@ -361,7 +333,6 @@ plt.title('Ensemble Cross-Validation Scores')
 plt.legend()
 plt.ylim(0.7, 0.9)
 
-# نمودار مقایسه دقت Ensemble با بهترین مدل تکی
 plt.subplot(2, 3, 5)
 best_single_model = max(base_results.items(), key=lambda x: x[1])
 comparison_labels = [f'Best Single ({best_single_model[0]})', 'Ensemble']
@@ -375,7 +346,6 @@ for bar, accuracy in zip(bars, comparison_accuracies):
     plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01,
              f'{accuracy:.3f}', ha='center', va='bottom')
 
-# نمودار ویژگی‌های مهم
 plt.subplot(2, 3, 6)
 top_features = feature_importance_df.head(5)
 plt.barh(top_features['feature'], top_features['importance_mean'], color='lightgreen')
@@ -386,14 +356,12 @@ plt.gca().invert_yaxis()
 plt.tight_layout()
 plt.show()
 
-# ذخیره مدل Ensemble و scaler
 print("\nSaving the ensemble model and scaler...")
 joblib.dump(ensemble_model, 'ensemble_model.pkl')
 joblib.dump(scaler, 'ensemble_scaler.pkl')
 joblib.dump(list(X_optimized.columns), 'ensemble_features.pkl')
 print("Ensemble model, scaler, and feature names saved successfully!")
 
-# نمایش اطلاعات نهایی
 print("\n" + "=" * 60)
 print("FINAL ENSEMBLE MODEL INFORMATION")
 print("=" * 60)
@@ -403,7 +371,6 @@ print(f"Improvement: {((ensemble_accuracy - best_single_model[1]) / best_single_
 print(f"Number of features: {X_optimized.shape[1]}")
 print(f"Top 3 features: {list(feature_importance_df['feature'].head(3))}")
 
-# پیش‌بینی نمونه‌ای
 print("\nSample Predictions with Ensemble Model:")
 sample_indices = np.random.choice(len(X_test), 15, replace=False)
 sample_X = X_test.iloc[sample_indices]
@@ -419,7 +386,6 @@ sample_results = pd.DataFrame({
 print(sample_results.to_string(index=False))
 print(f"\nSample Accuracy: {sample_results['Correct'].mean():.2%}")
 
-# نمایش احتمال پیش‌بینی برای چند نمونه
 print("\nPrediction Probabilities for Sample Cases:")
 sample_probas = ensemble_model.predict_proba(scaler.transform(sample_X.head(5)))
 for i, (true_val, pred_val) in enumerate(zip(sample_y_true.head(5), sample_y_pred.head(5))):

@@ -102,9 +102,8 @@ class StockPredictionApp(QMainWindow):
             "QPushButton { background-color: #4CAF50; color: white; font-weight: bold; padding: 10px; }")
         predict_btn.clicked.connect(self.predict)
 
-        # ایجاد یک دکمه برای بازگشت
         back_button = QPushButton("Back to Main", self)
-        back_button.clicked.connect(self.close_and_go_back) # متد close رو صدا میزنه
+        back_button.clicked.connect(self.close_and_go_back)
         back_button.setStyleSheet(
             "QPushButton { background-color: gray; color: white; font-weight: bold; padding: 10px; }")
 
@@ -427,16 +426,17 @@ class StockPredictionApp(QMainWindow):
         self.close()
 
 def main(parent=None):
-    app = QApplication(sys.argv)
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
 
-    # Set application style
+    font = QFont("Arial", 8, QFont.Bold)
+    app.setFont(font)
     app.setStyle('Fusion')
-
-    # Create and show the main window
-    mainWindow = StockPredictionApp(parent)
-    mainWindow.show()
-
-    sys.exit(app.exec_())
+    window = StockPredictionApp(parent)
+    window.show()
+    if parent is None:
+        sys.exit(app.exec_())
 
 
 if __name__ == '__main__':

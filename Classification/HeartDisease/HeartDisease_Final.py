@@ -19,7 +19,7 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-# تنظیمات اولیه
+
 plt.style.use('seaborn-v0_8')
 sns.set_palette("husl")
 pd.set_option('future.no_silent_downcasting', True)
@@ -104,7 +104,7 @@ class HeartDiseaseApp(QMainWindow):
             input_layout.addWidget(field, i, 1)
 
         # Prediction button
-        predict_btn = QPushButton('Predict HeartDisease Risk')
+        predict_btn = QPushButton('Predict Heart Disease Risk')
         predict_btn.clicked.connect(self.predict)
         predict_btn.setStyleSheet("""
             QPushButton { 
@@ -113,17 +113,23 @@ class HeartDiseaseApp(QMainWindow):
                 font-weight: bold; 
                 padding: 10px;
                 border-radius: 5px;
-                font-size: 14px;
+                font-size: 20px;
             }
             QPushButton:hover {
                 background-color: #45a049;
             }
         """)
+        #Closing
+        back_button = QPushButton("Back to Main", self)
+        back_button.clicked.connect(self.close_and_go_back)
+        back_button.setStyleSheet("QLabel { background-color: gray; font-size: 20px; font-weight: bold; padding: 15px;border-radius: 10px; }")
+        # left_layout.addWidget(self.back_button)
 
         # Add widgets to left layout
         left_layout.addWidget(model_info)
         left_layout.addWidget(input_group)
         left_layout.addWidget(predict_btn)
+        left_layout.addWidget(back_button)
         left_layout.addStretch()
 
         # Right panel for charts - using tabs
@@ -138,7 +144,7 @@ class HeartDiseaseApp(QMainWindow):
         self.result_label.setAlignment(Qt.AlignCenter)
         self.result_label.setStyleSheet("""
             QLabel { 
-                font-size: 18pt; 
+                font-size: 18px; 
                 font-weight: bold; 
                 padding: 15px;
                 border-radius: 10px;
@@ -146,10 +152,6 @@ class HeartDiseaseApp(QMainWindow):
         """)
         result_layout.addWidget(self.result_label)
 
-        self.back_button = QPushButton("Back to Main", self)
-        self.back_button.clicked.connect(self.close_and_go_back)  # متد close رو صدا میزنه
-        self.back_button.setStyleSheet("QLabel { background-color: gray; font-size: 18pt; font-weight: bold; padding: 15px;border-radius: 10px; }")
-        left_layout.addWidget(self.back_button)
 
         # Tab widget for charts
         self.tab_widget = QTabWidget()
@@ -291,12 +293,12 @@ class HeartDiseaseApp(QMainWindow):
 
             # Update result display
             if prediction == 1:
-                result_text = "⚠️ HeartDisease Detected!"
-                color = "#d32f2f"  # قرمز تیره
+                result_text = "HeartDisease Detected!"
+                color = "#d32f2f"
                 risk_level = f"Risk Level: {probability[1] * 100:.2f}%"
             else:
-                result_text = "✅ No HeartDisease Detected"
-                color = "#388e3c"  # سبز تیره
+                result_text = "No HeartDisease Detected"
+                color = "#388e3c"
                 risk_level = f"Risk Level: {probability[0] * 100:.2f}%"
 
             result_text += f"\n{risk_level}"
@@ -546,18 +548,18 @@ class HeartDiseaseApp(QMainWindow):
         self.close()
 
 
-def main(parent= None):
-    app = QApplication(sys.argv)
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
 
-    # Set application style
+    font = QFont("Arial", 8, QFont.Bold)
+    app.setFont(font)
     app.setStyle('Fusion')
-
-    # Create and show the main window
-
     window = HeartDiseaseApp(parent)
     window.show()
-
-    sys.exit(app.exec_())
+    if parent is None:
+        sys.exit(app.exec_())
 
 
 if __name__ == '__main__':

@@ -445,7 +445,5 @@ def main(parent=None):
     window.show()
     if parent is None:
         sys.exit(app.exec_())
-
-
 if __name__ == '__main__':
     main()

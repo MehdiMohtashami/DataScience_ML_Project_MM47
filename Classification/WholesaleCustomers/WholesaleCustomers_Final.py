@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import joblib
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QTabWidget, QMessageBox
-from PyQt5.QtGui import QDoubleValidator
+from PyQt5.QtGui import QDoubleValidator, QFont
 from PyQt5.QtCore import Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -76,6 +76,9 @@ class WholesalePredictor(QWidget):
         predict_btn.clicked.connect(self.predict)
         left_layout.addWidget(predict_btn)
 
+        back_btn = QPushButton("Back to Main")
+        back_btn.clicked.connect(self.go_back)
+        left_layout.addWidget(back_btn)
         # Prediction result
         self.result_label = QLabel('Prediction: ')
         self.result_label.setStyleSheet("font-weight: bold; font-size: 12px;")
@@ -224,8 +227,20 @@ class WholesalePredictor(QWidget):
         ax_scatter.legend()
         self.canvas_scatter.draw()
 
+    def go_back(self):
+        self.close()
+
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
+
+    font = QFont("Arial", 8, QFont.Bold)
+    app.setFont(font)
+    app.setStyle('Fusion')
+    window = WholesalePredictor()
+    window.show()
+    if parent is None:
+        sys.exit(app.exec_())
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    ex = WholesalePredictor()
-    ex.show()
-    sys.exit(app.exec_())
+    main()

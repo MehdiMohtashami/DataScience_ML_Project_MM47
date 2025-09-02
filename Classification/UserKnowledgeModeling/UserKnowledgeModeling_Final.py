@@ -150,6 +150,12 @@ class MainWindow(QMainWindow):
             "QPushButton { background-color: #4CAF50; color: white; font-weight: bold; padding: 10px; }")
         left_layout.addWidget(self.predict_btn)
 
+        self.back_btn = QPushButton("Back to Main")
+        self.back_btn.clicked.connect(self.go_back)
+        self.back_btn.setStyleSheet(
+            "QPushButton { background-color: gray; color: white; font-size: 16px; font-weight: bold; padding: 10px; }")
+        left_layout.addWidget(self.back_btn)
+
         # Result display
         self.result_label = QLabel("Please enter values and click Predict")
         self.result_label.setWordWrap(True)
@@ -458,15 +464,21 @@ class MainWindow(QMainWindow):
             ax.set_title('Prediction Confidence Analysis')
 
         self.prediction_analysis_canvas.draw()
+    def go_back(self):
+        self.close()
 
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
 
-    # Set application style
+    font = QFont("Arial", 8, QFont.Bold)
+    app.setFont(font)
     app.setStyle('Fusion')
-
     window = MainWindow()
     window.show()
-
-    sys.exit(app.exec_())
+    if parent is None:
+        sys.exit(app.exec_())
+if __name__ == "__main__":
+    main()

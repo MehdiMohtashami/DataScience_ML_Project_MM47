@@ -80,14 +80,14 @@ class MainWindow(QMainWindow):
         # Create input fields with validators
         self.input_fields = {}
         fields = [
-            ('Temperature', '20-24°C (e.g., 23.15)'),
-            ('Humidity', '25-35% (e.g., 27.27)'),
-            ('Light', '0-1600 Lux (e.g., 426.0)'),
-            ('CO2', '400-2000 ppm (e.g., 721.25)'),
-            ('HumidityRatio', '0.003-0.006 (e.g., 0.00479)'),
-            ('hour', '0-23 (e.g., 14)'),
-            ('day_of_week', '0-6 (0=Monday, 6=Sunday)'),
-            ('month', '1-12 (e.g., 2)')
+            ('Temperature:', '20-24°C (e.g., 23.15)'),
+            ('Humidity:', '25-35% (e.g., 27.27)'),
+            ('Light:', '0-1600 Lux (e.g., 426.0)'),
+            ('CO2:', '400-2000 ppm (e.g., 721.25)'),
+            ('HumidityRatio:', '0.003-0.006 (e.g., 0.00479)'),
+            ('Hour:', '0-23 (e.g., 14)'),
+            ('Day of week;', '0-6 (0=Monday, 6=Sunday)'),
+            ('Month:', '1-12 (e.g., 2)')
         ]
 
         for field, placeholder in fields:
@@ -107,7 +107,7 @@ class MainWindow(QMainWindow):
         left_layout.addWidget(predict_btn)
 
         back_button = QPushButton("Back to Main", self)
-        back_button.clicked.connect(self.close_and_go_back)  # متد close رو صدا میزنه
+        back_button.clicked.connect(self.close_and_go_back)
         back_button.setStyleSheet(
             "QPushButton { background-color: gray; color: white; font-weight: bold; padding: 10px; }")
         left_layout.addWidget(back_button)
@@ -172,24 +172,6 @@ class MainWindow(QMainWindow):
         self.relationship_canvas = None
 
     def set_dark_theme(self):
-        # Set dark palette
-        # dark_palette = QPalette()
-        # dark_palette.setColor(QPalette.Window, QColor(53, 53, 53))
-        # dark_palette.setColor(QPalette.WindowText, Qt.white)
-        # dark_palette.setColor(QPalette.Base, QColor(25, 25, 25))
-        # dark_palette.setColor(QPalette.AlternateBase, QColor(53, 53, 53))
-        # dark_palette.setColor(QPalette.ToolTipBase, Qt.white)
-        # dark_palette.setColor(QPalette.ToolTipText, Qt.white)
-        # dark_palette.setColor(QPalette.Text, Qt.white)
-        # dark_palette.setColor(QPalette.Button, QColor(53, 53, 53))
-        # dark_palette.setColor(QPalette.ButtonText, Qt.white)
-        # dark_palette.setColor(QPalette.BrightText, Qt.red)
-        # dark_palette.setColor(QPalette.Link, QColor(42, 130, 218))
-        # dark_palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
-        # dark_palette.setColor(QPalette.HighlightedText, Qt.black)
-        # QApplication.setPalette(dark_palette)
-
-        # Set style
         self.setStyleSheet("""
             QGroupBox {
                 font-weight: bold;
@@ -435,12 +417,18 @@ class MainWindow(QMainWindow):
     def close_and_go_back(self):
         self.close()
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
 
-    # Set application style
+    font = QFont("Arial", 8, QFont.Bold)
+    app.setFont(font)
     app.setStyle('Fusion')
-    parent = None
     window = MainWindow(parent)
     window.show()
-    sys.exit(app.exec_())
+    if parent is None:
+        sys.exit(app.exec_())
+
+if __name__ == "__main__":
+    main()

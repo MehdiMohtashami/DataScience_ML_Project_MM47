@@ -102,7 +102,7 @@ class WiFiApp(QMainWindow):
         scroll_layout.addWidget(self.predict_btn)
 
         self.back_button = QPushButton("Back to Main", self)
-        self.back_button.clicked.connect(self.close_and_go_back)  # متد close رو صدا میزنه
+        self.back_button.clicked.connect(self.close_and_go_back)
         self.back_button.setStyleSheet(
             "QPushButton { background-color: gray; color: white; font-weight: bold; padding: 10px; }")
         scroll_layout.addWidget(self.back_button)
@@ -349,10 +349,18 @@ class WiFiApp(QMainWindow):
     def close_and_go_back(self):
         self.close()
 
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    parent = None
+    font = QFont("Arial", 11, QFont.Bold)
+    app.setFont(font)
+    app.setStyle('Fusion')
     window = WiFiApp(parent)
     window.show()
-    sys.exit(app.exec_())
+    if parent is None:
+        sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    main()

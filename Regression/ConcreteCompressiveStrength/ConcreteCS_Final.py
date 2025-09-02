@@ -2,6 +2,7 @@ import sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from PyQt5.QtGui import QFont
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import seaborn as sns
@@ -98,15 +99,12 @@ class ConcretePredictorApp(QMainWindow):
         self.clear_btn.clicked.connect(self.clear_inputs)
         button_layout.addWidget(self.predict_btn)
         button_layout.addWidget(self.clear_btn)
-        # ایجاد یک دکمه برای بازگشت
+
         self.back_button = QPushButton("Back to Main", self)
-        self.back_button.clicked.connect(self.close_and_go_back)  # متد close رو صدا میزنه
+        self.back_button.clicked.connect(self.close_and_go_back)
         button_layout.addWidget(self.back_button)
 
         left_layout.addLayout(button_layout)
-
-
-
         # Prediction result
         self.result_label = QLabel("Prediction: - MPa")
         self.result_label.setStyleSheet("font-size: 16px; font-weight: bold; color: #2E86AB;")
@@ -256,14 +254,17 @@ class ConcretePredictorApp(QMainWindow):
 
     def close_and_go_back(self):
         self.close()
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-
-    # Set style
+    font = QFont("Arial", 8, QFont.Bold)
+    app.setFont(font)
     app.setStyle('Fusion')
-    parent = None
     window = ConcretePredictorApp(parent)
     window.show()
-
-    sys.exit(app.exec_())
+    if parent is None:
+        sys.exit(app.exec_())
+if __name__ == "__main__":
+    main()

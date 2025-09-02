@@ -73,7 +73,6 @@ class HubWindow(QMainWindow):
         self.dataset_map = {f"{d.category}/{d.name}": d for d in self.datasets}
         self.is_dark_mode = False
 
-        # تنظیم لایه پس‌زمینه
         self.background_label = QLabel(self)
         self.background_label.setGeometry(0, 0, self.width(), self.height())
         self.background_label.setScaledContents(True)
@@ -207,7 +206,6 @@ class HubWindow(QMainWindow):
         self.apply_styles(dark=self.is_dark_mode)
 
     def update_background(self):
-        """به‌روزرسانی تصویر پس‌زمینه بر اساس حالت روشن/تیره"""
         bg_path = self.dark_bg_path if self.is_dark_mode else self.light_bg_path
         if Path(bg_path).exists():
             pixmap = QPixmap(bg_path).scaled(self.width(), self.height(), Qt.IgnoreAspectRatio, Qt.SmoothTransformation)

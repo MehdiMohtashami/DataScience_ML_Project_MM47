@@ -15,7 +15,6 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QH
 from PyQt5.QtCore import Qt, QRegExp, QDate
 from PyQt5.QtGui import QRegExpValidator, QFont, QPalette, QColor
 
-# تنظیم استایل seaborn برای نمودارها
 sns.set_style("whitegrid")
 sns.set_palette("husl")
 
@@ -27,12 +26,12 @@ class MplCanvas(FigureCanvas):
         super(MplCanvas, self).__init__(self.fig)
         self.setParent(parent)
         self.setWindowTitle("Heart Disease Prediction")
-        # تنظیمات برای جلوگیری از به هم ریختن نمودارها
+        # Settings to prevent cluttering of charts
         self.fig.tight_layout()
         self.axes.grid(True, alpha=0.3)
 
     def clear_plot(self):
-        """پاک کردن کامل نمودار"""
+        """Clear the chart completely"""
         self.axes.clear()
         self.axes.grid(True, alpha=0.3)
         self.draw()
@@ -53,7 +52,7 @@ class BikeSharingPredictor:
     def preprocess_data(self, input_dict):
         df = pd.DataFrame([input_dict])
 
-        # تبدیل تاریخ
+        # Date conversion
         if 'dteday' in df.columns:
             df['dteday'] = pd.to_datetime(df['dteday'])
             df['year'] = df['dteday'].dt.year
@@ -61,7 +60,7 @@ class BikeSharingPredictor:
             df['day'] = df['dteday'].dt.day
             df.drop('dteday', axis=1, inplace=True)
 
-        # اطمینان از وجود تمام ویژگی‌های مورد نیاز
+        # Ensure all required features are present
         for feature in self.required_features:
             if feature not in df.columns:
                 df[feature] = 0
@@ -145,11 +144,11 @@ class MainWindow(QMainWindow):
         self.input_fields = {}
         row = 0
 
-        # Date - استفاده از تقویم
+        #Date - Using the calendar
         input_layout.addWidget(QLabel("Date:"), row, 0)
         self.input_fields['dteday'] = QDateEdit()
-        self.input_fields['dteday'].setDate(QDate(2012, 7, 15))  # تاریخ پیش‌فرض
-        self.input_fields['dteday'].setCalendarPopup(True)  # نمایش تقویم
+        self.input_fields['dteday'].setDate(QDate(2012, 7, 15))
+        self.input_fields['dteday'].setCalendarPopup(True)
         self.input_fields['dteday'].setDisplayFormat("yyyy-MM-dd")
         self.input_fields['dteday'].setStyleSheet("""
             QDateEdit {
@@ -282,9 +281,9 @@ class MainWindow(QMainWindow):
         """)
         predict_btn.clicked.connect(self.predict_demand)
 
-        # ایجاد یک دکمه برای بازگشت
+
         back_button = QPushButton("Back to Main", self)
-        back_button.clicked.connect(self.close_and_go_back)  # متد close رو صدا میزنه
+        back_button.clicked.connect(self.close_and_go_back)
         back_button.setStyleSheet("""
                     QPushButton {
                         background-color: gray;
@@ -410,21 +409,20 @@ class MainWindow(QMainWindow):
         self.setup_initial_charts()
 
     def setup_initial_charts(self):
-        """تنظیم داده‌های اولیه برای نمودارها"""
-        # نمونه داده برای نمودارهای رابطه ویژگی‌ها
+        # Sample data for feature relationship diagrams
         np.random.seed(42)
         self.sample_temp_values = np.random.uniform(0, 1, 100)
         self.sample_demand_values = 200 + 500 * self.sample_temp_values + np.random.normal(0, 50, 100)
 
-        # داده‌های نمونه برای الگوهای فصلی
+        # Sample data for seasonal patterns
         self.seasonal_avg = [150, 250, 220, 120]
 
-        # اهمیت ویژگی‌ها
+        # Importance of features
         self.feature_names = ['temp', 'hr', 'atemp', 'hum', 'windspeed', 'season', 'weathersit',
                               'mnth', 'weekday', 'workingday', 'holiday', 'yr']
         self.importance_values = [0.25, 0.18, 0.15, 0.12, 0.08, 0.07, 0.05, 0.04, 0.03, 0.02, 0.01, 0.0]
 
-        # ماتریس همبستگی
+        # Correlation matrix
         np.random.seed(42)
         corr_data = np.random.randn(10, 10)
         self.corr_matrix = np.corrcoef(corr_data)
@@ -497,7 +495,7 @@ class MainWindow(QMainWindow):
         self.update_relationship_charts()
 
     def update_prediction_charts(self):
-        # پاک کردن کامل نمودارها قبل از رسم جدید
+        # Completely clear charts before drawing new ones
         self.prediction_chart1.clear_plot()
         self.prediction_chart2.clear_plot()
 
@@ -511,7 +509,7 @@ class MainWindow(QMainWindow):
             self.prediction_chart1.axes.set_xlabel('Time')
             self.prediction_chart1.axes.set_ylabel('Predicted Bike Count')
 
-            # تنظیم محدوده محور Y برای جلوگیری از به هم ریختن
+            # Adjust the Y-axis range to avoid clutter
             if len(predictions) > 0:
                 y_min = max(0, min(predictions) - 50)
                 y_max = max(predictions) + 50
@@ -545,7 +543,7 @@ class MainWindow(QMainWindow):
         self.prediction_chart2.draw()
 
     def update_feature_charts(self):
-        # پاک کردن کامل نمودارها قبل از رسم جدید
+        # Completely clear charts before drawing new ones
         self.feature_chart1.clear_plot()
         self.feature_chart2.clear_plot()
 
@@ -578,7 +576,7 @@ class MainWindow(QMainWindow):
         self.feature_chart2.draw()
 
     def update_relationship_charts(self):
-        # پاک کردن کامل نمودارها قبل از رسم جدید
+        # Completely clear charts before drawing new ones
         self.relationship_chart1.clear_plot()
         self.relationship_chart2.clear_plot()
 
@@ -633,15 +631,18 @@ class MainWindow(QMainWindow):
 
     def close_and_go_back(self):
         self.close()
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-
-    # Set application style
+    font = QFont("Arial", 8, QFont.Bold)
+    app.setFont(font)
     app.setStyle('Fusion')
-    parent = None
-    # Create and show main window
     window = MainWindow()
     window.show()
+    if parent is None:
+        sys.exit(app.exec_())
 
-    sys.exit(app.exec_())
+if __name__ == '__main__':
+    main()

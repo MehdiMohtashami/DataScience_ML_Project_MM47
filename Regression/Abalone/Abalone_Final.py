@@ -7,6 +7,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 from PyQt5 import QtWidgets
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QDoubleSpinBox, QPushButton, QComboBox, QMessageBox, QTabWidget, QGridLayout
@@ -19,14 +20,14 @@ from sklearn.inspection import permutation_importance
 from sklearn.metrics import r2_score
 
 sns.set_style("whitegrid")
-DATA_PATH = "abalone.data.csv"  # مسیر دیتاست
-MODEL_PATH = "abalone_best_model.joblib"           # مدل موجود Pipeline
+DATA_PATH = "abalone.data.csv"
+MODEL_PATH = "abalone_best_model.joblib"
 RANDOM_STATE = 42
 
 RAW_COLS = ["Sex", "Length", "Diameter", "Height",
             "Whole weight", "Shucked weight", "Viscera weight", "Shell weight", "Rings"]
 
-# -------------------- خواندن دیتاست --------------------
+# -------------------- Reading the data set --------------------
 def load_raw_df(path=DATA_PATH):
     if not os.path.exists(path):
         raise FileNotFoundError(f"Dataset not found at: {path}")
@@ -38,7 +39,7 @@ def load_raw_df(path=DATA_PATH):
         df.columns = [c.strip().replace("_", " ") for c in df.columns]
         if "Sex" not in df.columns:
             raise ValueError("Unexpected CSV format. Expected 9 columns (Sex..Rings).")
-    # فیلتر برای حذف ردیف‌های نامعتبر مانند هدر اگر اشتباها خوانده شده باشد
+    # Filter to remove invalid rows such as headers if they were read incorrectly
     df = df[df['Sex'].isin(['M', 'F', 'I'])]
     numeric_cols = ["Length", "Diameter", "Height", "Whole weight",
                     "Shucked weight", "Viscera weight", "Shell weight", "Rings"]
@@ -47,7 +48,7 @@ def load_raw_df(path=DATA_PATH):
         df[c] = df[c].fillna(df[c].median())
     return df
 
-# -------------------- استخراج ویژگی‌ها --------------------
+# --------------------Feature extraction --------------------
 def prepare_features(df):
     d = df.copy()
     d["Volume"] = d["Length"] * d["Diameter"] * d["Height"]
@@ -61,7 +62,7 @@ def prepare_features(df):
     d["log_Shucked_weight"] = np.log1p(d["Shucked weight"])
     return d
 
-# -------------------- اپلیکیشن --------------------
+# -------------------- App --------------------
 class AbaloneApp(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -69,7 +70,7 @@ class AbaloneApp(QMainWindow):
         self.setWindowTitle("Abalone Age Predictor")
         self.resize(1100, 760)
 
-        # دیتاست
+        # dataset
         try:
             self.df_raw = load_raw_df()
             self.df_feat = prepare_features(self.df_raw)
@@ -82,16 +83,16 @@ class AbaloneApp(QMainWindow):
             QMessageBox.critical(self, "Dataset Error", str(e))
             raise
 
-        # Load مدل Pipeline موجود
+        # Load existing Pipeline model
         if os.path.exists(MODEL_PATH):
             self.pipeline = joblib.load(MODEL_PATH)
         else:
             QMessageBox.critical(self, "Model Error", f"{MODEL_PATH} not found!")
             raise SystemExit("Model required. Exiting.")
 
-        # محاسبه دقت مدل (R² Score)
+        # Calculating Model Accuracy (R² Score)
         self.r2 = r2_score(self.y_test, self.pipeline.predict(self.X_test))
-        # نام مدل
+        # Model name
         self.model_name = self.pipeline.steps[-1][1].__class__.__name__
 
         self.pred_rings = None
@@ -112,7 +113,7 @@ class AbaloneApp(QMainWindow):
         self._build_visual_tab()
         self._build_importance_tab()
 
-    # ---------- تب ورودی ----------
+    # ---------- Input tab----------
     def _build_input_tab(self):
         grid = QGridLayout()
         self.tab_input.setLayout(grid)
@@ -153,9 +154,9 @@ class AbaloneApp(QMainWindow):
         btn_layout.addWidget(self.predict_btn)
         grid.addLayout(btn_layout, row, 0, 1, 2)
 
-        # ایجاد یک دکمه برای بازگشت
+
         self.back_button = QPushButton("Back to Main", self)
-        self.back_button.clicked.connect(self.close_and_go_back)  # متد close رو صدا میزنه
+        self.back_button.clicked.connect(self.close_and_go_back)
         btn_layout.addWidget(self.back_button)
         grid.addLayout(btn_layout, row, 2, 1, 2)
 
@@ -186,14 +187,13 @@ class AbaloneApp(QMainWindow):
         except Exception as e:
             QMessageBox.critical(self, "Prediction error", str(e))
 
-    # ---------- تب Visual ----------
+    # ----------  Visual ----------
     def _build_visual_tab(self):
         v = QVBoxLayout()
         self.tab_visual.setLayout(v)
         self.fig_vis = Figure(figsize=(9,6))
         self.canvas_vis = FigureCanvas(self.fig_vis)
         v.addWidget(self.canvas_vis)
-        # بدون آپدیت اولیه، تا predict خالی بماند
 
     def update_visuals(self):
         self.fig_vis.clear()
@@ -256,13 +256,19 @@ class AbaloneApp(QMainWindow):
 
     def close_and_go_back(self):
         self.close()
-# -------------------- اجرای اپ --------------------
-def main(parent = None):
-    app = QApplication(sys.argv)
+# --------------------Run --------------------
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
 
-    win = AbaloneApp(parent)
-    win.show()
-    sys.exit(app.exec_())
+    font = QFont("Arial", 10, QFont.Bold)
+    app.setFont(font)
+    app.setStyle('Fusion')
+    window =AbaloneApp(parent)
+    window.show()
+    if parent is None:
+        sys.exit(app.exec_())
 
 if __name__ == "__main__":
     main()

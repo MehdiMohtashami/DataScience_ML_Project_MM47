@@ -21,7 +21,7 @@ from sklearn.naive_bayes import GaussianNB
 import warnings
 warnings.filterwarnings('ignore')
 
-# Magic function for plots in Jupyter Notebook (اگر از پایچارم استفاده می‌کنید، این خط ممکن است نیاز نباشد)
+# Magic function for plots in Jupyter Notebook (if using PyCharm, this line may not be needed)
 # %matplotlib inline
 # Load the dataset
 df = pd.read_csv('wifi_localization.csv')
@@ -31,7 +31,7 @@ print("First 5 rows:")
 print(df.head())
 print("\n" + "="*50 + "\n")
 
-# Your initial analysis (خیلی خوب بود)
+# Your initial analysis (very good)
 print("Dataset Shape:", df.shape)
 print("\nInfo:")
 print(df.info())
@@ -61,7 +61,7 @@ plt.xticks(rotation=45)
 plt.savefig('Distribution_WiFi_Signal_Strengths.png')
 plt.show()
 
-# 3. Correlation Heatmap (چقدر ویژگی‌ها با هم و با هدف همبستگی دارند؟)
+# 3. Correlation Heatmap (how much are features correlated with each other and the target?)
 plt.figure(figsize=(12, 8))
 # Since Room is categorical, we need to encode it temporarily for correlation calc
 corr_df = df.copy()
@@ -71,8 +71,8 @@ plt.title('Correlation Matrix Heatmap')
 plt.savefig('Correlation_Matrix_Heatmap.png')
 plt.show()
 
-# 4. Pairplot to see relationships (ممکن است به خاطر تعداد ویژگی زیاد شلوغ شود)
-# ما یک نمونه تصادفی می‌گیریم تا نمودار قابل مدیریت باشد
+# 4. Pairplot to see relationships (may get crowded due to many features)
+# We take a random sample to make the plot manageable
 sample_df = df.sample(n=100, random_state=42) # 100 sample for clarity
 sns.pairplot(sample_df, hue='Room', palette='Set1', corner=True)
 plt.suptitle('Pair-plot of Features (Sampled 100 points)', y=1.02)
@@ -87,7 +87,7 @@ y = df['Room']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 # 'stratify=y' ensures the class distribution is same in both train and test sets
 
-# Feature Scaling (خیلی مهم برای مدل‌هایی مانند SVM، KNN و Logistic Regression)
+# Feature Scaling (very important for models like SVM, KNN, and Logistic Regression)
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
@@ -154,55 +154,55 @@ plt.savefig('ModelComparison_Accuracy.png')
 plt.show()
 
 # Importing Essential Libraries
-# import pandas as pd
-# import numpy as np
-# from sklearn.model_selection import train_test_split
-# from sklearn.preprocessing import StandardScaler
-# from sklearn.neighbors import KNeighborsClassifier
-# from sklearn.svm import SVC
-# from sklearn.naive_bayes import GaussianNB
-# import joblib
-#
-# # 1. Load the Dataset
-# df = pd.read_csv('wifi_localization.csv')
-#
-# # 2. Separate Features (X) and Target (y)
-# X = df.drop('Room', axis=1)
-# y = df['Room']
-#
-# # 3. Split the data into Training and Testing sets
-# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
-#
-# # 4. Initialize and Fit the Scaler ONLY ONCE on the training data
-# scaler = StandardScaler()
-# X_train_scaled = scaler.fit_transform(X_train) # Fit and Transform the training data
-# # We don't transform X_test here because we are just training and saving models.
-#
-# # 5. Train and Save K-Nearest Neighbors (KNN) - OUR MAIN CHOICE
-# print("Training KNN model...")
-# knn_model = KNeighborsClassifier()
-# knn_model.fit(X_train_scaled, y_train) # Train on SCALED data
-# joblib.dump(knn_model, 'knn_wifi_model.pkl')
-# print("KNN Model saved as 'knn_wifi_model.pkl'")
-#
-# # 6. Train and Save Linear SVM
-# print("Training Linear SVM model...")
-# svm_linear_model = SVC(kernel='linear', random_state=42)
-# svm_linear_model.fit(X_train_scaled, y_train) # Train on SCALED data
-# joblib.dump(svm_linear_model, 'svm_linear_wifi_model.pkl')
-# print("Linear SVM Model saved as 'svm_linear_wifi_model.pkl'")
-#
-# # 7. Train and Save Naive Bayes
-# print("Training Naive Bayes model...")
-# nb_model = GaussianNB()
-# nb_model.fit(X_train_scaled, y_train) # Train on SCALED data
-# joblib.dump(nb_model, 'nb_wifi_model.pkl')
-# print("Naive Bayes Model saved as 'nb_wifi_model.pkl'")
-#
-# # 8. Save the Scaler (THE MOST IMPORTANT PART!)
-# print("Saving the scaler...")
-# joblib.dump(scaler, 'standard_scaler.pkl')
-# print("Scaler saved as 'standard_scaler.pkl'")
-#
-# print("\n✅ All 3 models and 1 scaler have been saved successfully!")
-# print("📁 Total files created: 4 (.pkl files)")
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.naive_bayes import GaussianNB
+import joblib
+
+# 1. Load the Dataset
+df = pd.read_csv('wifi_localization.csv')
+
+# 2. Separate Features (X) and Target (y)
+X = df.drop('Room', axis=1)
+y = df['Room']
+
+# 3. Split the data into Training and Testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+
+# 4. Initialize and Fit the Scaler ONLY ONCE on the training data
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train) # Fit and Transform the training data
+# We don't transform X_test here because we are just training and saving models.
+
+# 5. Train and Save K-Nearest Neighbors (KNN) - OUR MAIN CHOICE
+print("Training KNN model...")
+knn_model = KNeighborsClassifier()
+knn_model.fit(X_train_scaled, y_train) # Train on SCALED data
+joblib.dump(knn_model, 'knn_wifi_model.pkl')
+print("KNN Model saved as 'knn_wifi_model.pkl'")
+
+# 6. Train and Save Linear SVM
+print("Training Linear SVM model...")
+svm_linear_model = SVC(kernel='linear', random_state=42)
+svm_linear_model.fit(X_train_scaled, y_train) # Train on SCALED data
+joblib.dump(svm_linear_model, 'svm_linear_wifi_model.pkl')
+print("Linear SVM Model saved as 'svm_linear_wifi_model.pkl'")
+
+# 7. Train and Save Naive Bayes
+print("Training Naive Bayes model...")
+nb_model = GaussianNB()
+nb_model.fit(X_train_scaled, y_train) # Train on SCALED data
+joblib.dump(nb_model, 'nb_wifi_model.pkl')
+print("Naive Bayes Model saved as 'nb_wifi_model.pkl'")
+
+# 8. Save the Scaler (THE MOST IMPORTANT PART!)
+print("Saving the scaler...")
+joblib.dump(scaler, 'standard_scaler.pkl')
+print("Scaler saved as 'standard_scaler.pkl'")
+
+print("All 3 models and 1 scaler have been saved successfully!")
+print("Total files created: 4 (.pkl files)")

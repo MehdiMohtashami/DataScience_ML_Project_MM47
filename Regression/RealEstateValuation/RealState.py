@@ -21,33 +21,33 @@ df = pd.read_csv('../../files/RealStateHouse/Real estate valuation data set.csv'
 # print(df.isna().sum())
 # print(df.shape)
 
-# هیستوگرام تمام ستون‌ها
+# Histogram of all columns
 # df.hist(figsize=(12, 10))
 # plt.tight_layout()
 # plt.show()
 #
-# # ماتریس همبستگی
+# # Correlation matrix
 # corr = df.corr()
 # plt.figure(figsize=(10, 8))
 # sns.heatmap(corr, annot=True, cmap='coolwarm', fmt=".2f")
 # plt.title('Correlation Matrix')
 # plt.show()
 #
-# # بررسی رابطه ویژگی‌ها با متغیر هدف
+# # Explore relationship between features and target variable
 # sns.pairplot(df, y_vars=['Y house price of unit area'],
 #              x_vars=df.columns.drop('Y house price of unit area'))
 # plt.show()
 #
-# # جداسازی ویژگی‌ها و متغیر هدف
+# # Separate features and target variable
 # X = df.drop('Y house price of unit area', axis=1)
 # y = df['Y house price of unit area']
 #
-# # تقسیم داده به آموزش و تست
+# # Split data into training and test sets
 # X_train, X_test, y_train, y_test = train_test_split(
 #     X, y, test_size=0.2, random_state=42
 # )
 #
-# # استانداردسازی داده‌ها
+# # Standardize data
 # scaler = StandardScaler()
 # X_train_scaled = scaler.fit_transform(X_train)
 # X_test_scaled = scaler.transform(X_test)
@@ -74,16 +74,16 @@ df = pd.read_csv('../../files/RealStateHouse/Real estate valuation data set.csv'
 #
 #     print(f"{name}: R² = {r2:.4f}, RMSE = {rmse:.4f}")
 #
-# # مقایسه مدل‌ها
+# # Compare models
 # results_df = pd.DataFrame(results).T
 # results_df.sort_values(by='R2', ascending=False, inplace=True)
 # print(results_df)
 #
-# # بهترین مدل بر اساس R²
+# # Best model based on R²
 # best_model_name = results_df.index[0]
 # best_model = models[best_model_name]
 #
-# # تنظیم هیپرپارامترها (مثال برای Random Forest)
+# # Hyperparameter tuning (example for Random Forest)
 # from sklearn.model_selection import GridSearchCV
 # from sklearn.model_selection import RandomizedSearchCV
 # from scipy.stats import randint
@@ -119,7 +119,7 @@ df = pd.read_csv('../../files/RealStateHouse/Real estate valuation data set.csv'
 # )
 # best_rf.fit(X_train_scaled, y_train)
 #
-# # ارزیابی روی داده تست
+# # Evaluate on test data
 # y_pred_tuned = best_rf.predict(X_test_scaled)
 # r2_tuned = r2_score(y_test, y_pred_tuned)
 # print(f"Tuned Random Forest R² on Test Set: {r2_tuned:.4f}")
@@ -132,7 +132,7 @@ df = pd.read_csv('../../files/RealStateHouse/Real estate valuation data set.csv'
 # print("Feature Importances:")
 # print(feature_importances)
 #
-# # تجسم اهمیت ویژگی‌ها
+# # Visualize feature importance
 # plt.figure(figsize=(10, 6))
 # feature_importances.plot(kind='barh')
 # plt.title('Feature Importances in Random Forest Model')
@@ -142,27 +142,26 @@ import joblib
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
 
-
-# جداسازی ویژگی‌ها و متغیر هدف
+# Separate features and target variable
 X = df.drop('Y house price of unit area', axis=1)
 y = df['Y house price of unit area']
 
-# تقسیم داده به آموزش و تست
+# Split data into training and test sets
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
 
-# نرمال‌سازی داده‌ها (استانداردسازی)
+# Normalize data (standardization)
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# آموزش مدل Random Forest (پیش‌فرض)
+# Train Random Forest model (default)
 rf_model = RandomForestRegressor(random_state=42)
 rf_model.fit(X_train_scaled, y_train)
 
-# ذخیره مدل و اسکیلر
+# Save model and scaler
 joblib.dump(rf_model, 'real_estate_rf_model.pkl')
 joblib.dump(scaler, 'scaler.pkl')
 
@@ -172,13 +171,13 @@ import seaborn as sns
 import numpy as np
 from sklearn.metrics import r2_score
 
-# بارگذاری مدل (اختیاری - اگر در همان نشست اجرا می‌شود نیاز نیست)
+# Load model (optional - not needed if running in the same session)
 rf_model = joblib.load('real_estate_rf_model.pkl')
 
-# پیش‌بینی روی داده تست
+# Predict on test data
 y_pred = rf_model.predict(X_test_scaled)
 
-# محاسبه معیارهای ارزیابی
+# Calculate evaluation metrics
 r2 = r2_score(y_test, y_pred)
 rmse = np.sqrt(np.mean((y_test - y_pred)**2))
 
@@ -186,7 +185,7 @@ print(f"Random Forest Performance:")
 print(f"R² Score: {r2:.4f}")
 print(f"RMSE: {rmse:.4f}")
 
-# 1. نمودار مقایسه مدل‌ها (بر اساس نتایج قبلی)
+# 1. Model comparison plot (based on previous results)
 models_comparison = {
     'Linear Regression': 0.6811,
     'Ridge': 0.6814,
@@ -197,7 +196,7 @@ models_comparison = {
     'XGBoost': 0.7688
 }
 
-# ایجاد DataFrame برای تجسم
+# Create DataFrame for visualization
 results_df = pd.DataFrame(list(models_comparison.items()), columns=['Model', 'R2'])
 results_df = results_df.sort_values('R2', ascending=False)
 
@@ -213,7 +212,7 @@ plt.tight_layout()
 plt.savefig('models_comparison.png', dpi=300)
 plt.show()
 
-# 2. نمودار پیش‌بینی در مقابل واقعی
+# 2. Actual vs Predicted plot
 plt.figure(figsize=(10, 6))
 sns.scatterplot(x=y_test, y=y_pred, alpha=0.6, edgecolor=None)
 plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2)
@@ -230,7 +229,7 @@ plt.tight_layout()
 plt.savefig('actual_vs_predicted.png', dpi=300)
 plt.show()
 
-# 3. نمودار اهمیت ویژگی‌ها
+# 3. Feature importance plot
 feature_importances = pd.Series(
     rf_model.feature_importances_,
     index=X.columns
@@ -246,7 +245,7 @@ plt.tight_layout()
 plt.savefig('feature_importances.png', dpi=300)
 plt.show()
 
-# 4. نمودار باقیمانده‌ها
+# 4. Residual analysis plot
 residuals = y_test - y_pred
 plt.figure(figsize=(10, 6))
 sns.scatterplot(x=y_pred, y=residuals, alpha=0.6)
@@ -259,12 +258,11 @@ plt.tight_layout()
 plt.savefig('residual_analysis.png', dpi=300)
 plt.show()
 
-
-# لود مدل و اسکیلر
+# Load model and scaler
 model = joblib.load('real_estate_rf_model.pkl')
 scaler = joblib.load('scaler.pkl')
 
-# داده جدید (مثال)
+# New data (example)
 new_data = pd.DataFrame({
     'X1 transaction date': [2013.333],
     'X2 house age': [10.5],
@@ -274,9 +272,9 @@ new_data = pd.DataFrame({
     'X6 longitude': [121.54]
 })
 
-# پیش‌پردازش داده جدید
+# Preprocess new data
 new_data_scaled = scaler.transform(new_data)
 
-# پیش‌بینی قیمت
+# Predict price
 predicted_price = model.predict(new_data_scaled)
 print(f"Predicted house price: {predicted_price[0]:.2f} (10,000 TWD/Ping)")

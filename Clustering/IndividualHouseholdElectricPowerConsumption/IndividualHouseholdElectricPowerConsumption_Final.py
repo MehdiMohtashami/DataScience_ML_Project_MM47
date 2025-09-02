@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, 
                              QLabel, QLineEdit, QPushButton, QTabWidget, QFormLayout)
 from PyQt5.QtCore import Qt
@@ -18,14 +19,12 @@ class PowerConsumptionUI(QMainWindow):
         self.setWindowTitle("Household Power Consumption Clustering")
         self.setGeometry(100, 100, 1200, 800)
 
-        # لود مدل KMeans
         try:
             self.kmeans = joblib.load('kmeans_model.joblib')
         except FileNotFoundError:
-            print("فایل مدل kmeans_model.joblib پیدا نشد!")
+            print("The model file kmeans_model.joblib was not found!")
             sys.exit()
 
-        # لود داده برای چارت‌ها
         try:
             df = pd.read_csv('household_power_consumption.txt', sep=',', na_values='?')
             df.fillna(df.mean(numeric_only=True), inplace=True)
@@ -41,13 +40,12 @@ class PowerConsumptionUI(QMainWindow):
             self.scaler.fit(self.df_hourly[self.features])
             self.df_hourly['Cluster'] = self.kmeans.predict(self.scaler.transform(self.df_hourly[self.features]))
         except FileNotFoundError:
-            print("فایل داده household_power_consumption.txt پیدا نشد!")
+            print("The data file household_power_consumption.txt was not found!")
             sys.exit()
 
         # UI components
         self.init_ui()
 
-        # متغیر برای ذخیره چارت‌ها
         self.prediction_made = False
         self.last_prediction = None
 
@@ -56,19 +54,16 @@ class PowerConsumptionUI(QMainWindow):
         self.setCentralWidget(main_widget)
         main_layout = QVBoxLayout(main_widget)
 
-        # بخش اطلاعات مدل
         model_info = QLabel("Clustering Model: KMeans (K=4, Silhouette Score=0.7243)")
         model_info.setAlignment(Qt.AlignCenter)
         model_info.setStyleSheet("font-size: 16px; font-weight: bold;")
         main_layout.addWidget(model_info)
 
-        # لیبل برای نمایش نتیجه پیش‌بینی
         self.prediction_label = QLabel("Please enter values and click Predict.")
         self.prediction_label.setAlignment(Qt.AlignCenter)
         self.prediction_label.setStyleSheet("font-size: 14px; color: green;")
         main_layout.addWidget(self.prediction_label)
 
-        # بخش ورودی‌ها
         input_widget = QWidget()
         input_layout = QFormLayout(input_widget)
         self.inputs = {}
@@ -93,28 +88,23 @@ class PowerConsumptionUI(QMainWindow):
         back_button.clicked.connect(self.close_and_go_back)
         input_layout.addRow(back_button)
 
-        # تب‌های چارت
         self.tabs = QTabWidget()
         main_layout.addWidget(self.tabs)
 
-        # تب Prediction Analysis
         self.prediction_tab = QWidget()
         self.prediction_layout = QHBoxLayout(self.prediction_tab)
         self.tabs.addTab(self.prediction_tab, "Prediction Analysis")
 
-        # تب Feature Importance
         self.importance_tab = QWidget()
         self.importance_layout = QHBoxLayout(self.importance_tab)
         self.tabs.addTab(self.importance_tab, "Feature Importance")
 
-        # تب Feature Relationship
         self.relationship_tab = QWidget()
         self.relationship_layout = QHBoxLayout(self.relationship_tab)
         self.tabs.addTab(self.relationship_tab, "Feature Relationship")
 
     def predict_cluster(self):
         try:
-            # گرفتن مقادیر ورودی
             input_data = []
             for feature in self.features:
                 value = self.inputs[feature].text()
@@ -124,13 +114,11 @@ class PowerConsumptionUI(QMainWindow):
                     return
                 input_data.append(float(value))
 
-            # پیش‌بینی خوشه
             input_data = np.array(input_data).reshape(1, -1)
             input_scaled = self.scaler.transform(input_data)
             cluster = self.kmeans.predict(input_scaled)[0]
             self.last_prediction = (input_data[0], cluster)
 
-            # نمایش نتیجه در لیبل
             self.prediction_label.setText(f"Your input belongs to Cluster {cluster}.")
             self.prediction_label.setStyleSheet("font-size: 14px; color: green;")
             self.prediction_made = True
@@ -141,7 +129,6 @@ class PowerConsumptionUI(QMainWindow):
             self.prediction_label.setStyleSheet("font-size: 14px; color: red;")
 
     def update_charts(self):
-        # پاک کردن چارت‌های قبلی
         for i in reversed(range(self.prediction_layout.count())):
             self.prediction_layout.itemAt(i).widget().setParent(None)
         for i in reversed(range(self.importance_layout.count())):
@@ -150,7 +137,6 @@ class PowerConsumptionUI(QMainWindow):
             self.relationship_layout.itemAt(i).widget().setParent(None)
 
         if self.prediction_made:
-            # چارت ۱: Scatter Plot
             fig1, ax1 = plt.subplots(figsize=(5, 4))
             sns.scatterplot(x=self.df_hourly.index, y='Global_active_power', hue='Cluster', 
                            data=self.df_hourly, palette='viridis', ax=ax1)
@@ -164,7 +150,6 @@ class PowerConsumptionUI(QMainWindow):
             canvas1 = FigureCanvas(fig1)
             self.prediction_layout.addWidget(canvas1)
 
-            # چارت ۲: Violin Plot
             fig2, ax2 = plt.subplots(figsize=(5, 4))
             sns.violinplot(x='Cluster', y='Global_active_power', data=self.df_hourly, ax=ax2, palette='muted')
             if self.last_prediction:
@@ -176,7 +161,6 @@ class PowerConsumptionUI(QMainWindow):
             canvas2 = FigureCanvas(fig2)
             self.prediction_layout.addWidget(canvas2)
 
-            # چارت ۳: Bar Plot برای واریانس
             variances = pd.DataFrame({col: self.df_hourly.groupby('Cluster')[col].var() for col in self.features})
             fig3, ax3 = plt.subplots(figsize=(5, 4))
             variances.mean().plot(kind='bar', ax=ax3, color='skyblue')
@@ -187,7 +171,6 @@ class PowerConsumptionUI(QMainWindow):
             canvas3 = FigureCanvas(fig3)
             self.importance_layout.addWidget(canvas3)
 
-            # چارت ۴: Pie Chart برای توزیع خوشه‌ها
             fig4, ax4 = plt.subplots(figsize=(5, 4))
             cluster_counts = self.df_hourly['Cluster'].value_counts()
             ax4.pie(cluster_counts, labels=cluster_counts.index, autopct='%1.1f%%', colors=sns.color_palette('pastel'))
@@ -195,14 +178,12 @@ class PowerConsumptionUI(QMainWindow):
             canvas4 = FigureCanvas(fig4)
             self.importance_layout.addWidget(canvas4)
 
-            # چارت ۵: Heatmap
             fig5, ax5 = plt.subplots(figsize=(5, 4))
             sns.heatmap(self.df_hourly[self.features].corr(), annot=True, cmap='coolwarm', ax=ax5)
             ax5.set_title('Feature Correlation')
             canvas5 = FigureCanvas(fig5)
             self.relationship_layout.addWidget(canvas5)
 
-            # چارت ۶: Scatter Plot برای رابطه ویژگی‌ها
             fig6, ax6 = plt.subplots(figsize=(5, 4))
             sns.scatterplot(x='Sub_metering_1', y='Global_active_power', hue='Cluster', 
                            data=self.df_hourly, palette='deep', ax=ax6)
@@ -220,10 +201,17 @@ class PowerConsumptionUI(QMainWindow):
 
     def close_and_go_back(self):
         self.close()
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    parent = None
+    font = QFont("Arial", 10, QFont.Bold)
+    app.setFont(font)
+    app.setStyle('Fusion')
     window = PowerConsumptionUI(parent)
     window.show()
-    sys.exit(app.exec_())
+    if parent is None:
+        sys.exit(app.exec_())
+if __name__ == '__main__':
+    main()

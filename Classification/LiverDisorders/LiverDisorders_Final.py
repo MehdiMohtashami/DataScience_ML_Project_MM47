@@ -1,4 +1,3 @@
-
 import sys
 import pandas as pd
 import numpy as np
@@ -6,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
                              QLabel, QLineEdit, QPushButton, QTabWidget, QGridLayout, QMessageBox)
-from PyQt5.QtGui import QDoubleValidator
+from PyQt5.QtGui import QDoubleValidator, QFont
 from PyQt5.QtCore import Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from sklearn.preprocessing import StandardScaler, LabelEncoder
@@ -21,7 +20,6 @@ class LiverDisordersUI(QMainWindow):
         self.setWindowTitle("BUPA LiverDisorders Prediction")
         self.setGeometry(100, 100, 1200, 800)
 
-        # لود مدل و پیش‌پردازش
         try:
             self.model = joblib.load('liver_disorders_model.pkl')
             self.scaler = joblib.load('scaler.pkl')
@@ -38,7 +36,6 @@ class LiverDisordersUI(QMainWindow):
             'Sgot': (10.0, 80.0), 'Gammagt': (10.0, 200.0), 'Drinks': (0.0, 20.0)
         }
 
-        # لود دیتاست برای چارت‌ها
         try:
             self.df = pd.read_csv('bupa.data.csv')
         except FileNotFoundError:
@@ -51,33 +48,27 @@ class LiverDisordersUI(QMainWindow):
         self.df['Gammagt_Alkphos_ratio'] = self.df['Gammagt'] / (self.df['Alkphos'] + 1e-5)
         self.df['Sgpt_Gammagt'] = self.df['Sgpt'] * self.df['Gammagt']
 
-        # رابط کاربری
         self.init_ui()
 
-        # متغیر برای ذخیره پیش‌بینی‌ها
         self.last_prediction = None
-        self.canvases = []  # لیست برای مدیریت چارت‌ها
+        self.canvases = []
 
     def init_ui(self):
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         main_layout = QVBoxLayout(central_widget)
 
-        # عنوان و اطلاعات مدل
         model_info = QLabel("Model: Random Forest\nAccuracy: 0.70 | F1 Score: 0.70 | CV Score: 0.78")
         model_info.setStyleSheet("font-size: 16px; font-weight: bold; color: #2c3e50;")
         main_layout.addWidget(model_info, alignment=Qt.AlignCenter)
 
-        # تب‌ها
         self.tabs = QTabWidget()
         main_layout.addWidget(self.tabs)
 
-        # تب ورودی و پیش‌بینی
         input_widget = QWidget()
         input_layout = QVBoxLayout(input_widget)
         self.tabs.addTab(input_widget, "Input & Prediction")
 
-        # فیلدهای ورودی با محدوده
         input_grid = QGridLayout()
         self.input_fields = {}
         for i, feature in enumerate(['Mcv', 'Alkphos', 'Sgpt', 'Sgot', 'Gammagt', 'Drinks']):
@@ -90,7 +81,6 @@ class LiverDisordersUI(QMainWindow):
             self.input_fields[feature] = input_field
         input_layout.addLayout(input_grid)
 
-        # دکمه پیش‌بینی
         predict_button = QPushButton("Make Prediction")
         predict_button.setStyleSheet(
             "background-color: #3498db; color: white; padding: 15px; min-width: 150px; font-size: 16px; font-weight: bold;")
@@ -104,29 +94,27 @@ class LiverDisordersUI(QMainWindow):
         input_layout.addWidget(back_button, alignment=Qt.AlignCenter)
 
 
-        # نتیجه پیش‌بینی
         self.result_label = QLabel("Prediction: None")
         self.result_label.setStyleSheet("font-size: 18px; font-weight: bold; color: #27ae60;")
         input_layout.addWidget(self.result_label, alignment=Qt.AlignCenter)
 
-        # تب Prediction Analysis
+        # tab Prediction Analysis
         self.prediction_tab = QWidget()
         self.prediction_layout = QHBoxLayout(self.prediction_tab)
         self.tabs.addTab(self.prediction_tab, "Prediction Analysis")
 
-        # تب Feature Importance
+        #  Feature Importance
         self.importance_tab = QWidget()
         self.importance_layout = QHBoxLayout(self.importance_tab)
         self.tabs.addTab(self.importance_tab, "Feature Importance")
 
-        # تب Feature Relationship
+        #  Feature Relationship
         self.relationship_tab = QWidget()
         self.relationship_layout = QHBoxLayout(self.relationship_tab)
         self.tabs.addTab(self.relationship_tab, "Feature Relationship")
 
     def predict(self):
         try:
-            # گرفتن مقادیر ورودی و چک بازه
             inputs = {}
             for feature in ['Mcv', 'Alkphos', 'Sgpt', 'Sgot', 'Gammagt', 'Drinks']:
                 value = self.input_fields[feature].text()
@@ -143,7 +131,6 @@ class LiverDisordersUI(QMainWindow):
             inputs['Gammagt_Alkphos_ratio'] = inputs['Gammagt'] / (inputs['Alkphos'] + 1e-5)
             inputs['Sgpt_Gammagt'] = inputs['Sgpt'] * inputs['Gammagt']
 
-            # آماده‌سازی داده و پیش‌بینی
             input_df = pd.DataFrame([inputs], columns=self.features)
             X_new = self.selector.transform(input_df)
             X_new_scaled = self.scaler.transform(X_new)
@@ -151,10 +138,8 @@ class LiverDisordersUI(QMainWindow):
             pred_label = self.le.inverse_transform(pred)[0]
             self.last_prediction = {'inputs': inputs, 'label': pred_label}
 
-            # نمایش نتیجه
             self.result_label.setText(f"Prediction: Selector = {pred_label}")
 
-            # پاک کردن و به‌روزرسانی چارت‌ها
             self.clear_charts()
             self.update_charts()
 
@@ -165,14 +150,12 @@ class LiverDisordersUI(QMainWindow):
             self.clear_charts()
 
     def clear_charts(self):
-        # پاک کردن چارت‌های قبلی
         for canvas in self.canvases:
             if canvas:
                 canvas.figure.clear()
                 canvas.deleteLater()
         self.canvases = []
 
-        # به‌روزرسانی layout
         for layout in [self.prediction_layout, self.importance_layout, self.relationship_layout]:
             while layout.count():
                 item = layout.takeAt(0)
@@ -235,10 +218,17 @@ class LiverDisordersUI(QMainWindow):
 
     def close_and_go_back(self):
         self.close()
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    parent = None
+    font = QFont("Arial", 8, QFont.Bold)
+    app.setFont(font)
+    app.setStyle('Fusion')
     window = LiverDisordersUI(parent)
     window.show()
-    sys.exit(app.exec_())
+    if parent is None:
+        sys.exit(app.exec_())
+if __name__ == '__main__':
+    main()

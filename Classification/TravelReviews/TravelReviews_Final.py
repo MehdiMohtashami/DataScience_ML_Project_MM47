@@ -2,6 +2,7 @@ import sys
 import pandas as pd
 import numpy as np
 import joblib
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
                              QLabel, QDoubleSpinBox, QPushButton, QTabWidget, QFormLayout)
 from PyQt5.QtCore import Qt
@@ -62,7 +63,7 @@ class TravelReviewsUI(QMainWindow):
         main_layout.addWidget(predict_button, alignment=Qt.AlignCenter)
 
         back_button = QPushButton("Back to Main", self)
-        back_button.clicked.connect(self.close_and_go_back)  # متد close رو صدا میزنه
+        back_button.clicked.connect(self.close_and_go_back)
         main_layout.addWidget(back_button, alignment=Qt.AlignCenter)
 
 
@@ -188,10 +189,18 @@ class TravelReviewsUI(QMainWindow):
     def close_and_go_back(self):
         self.close()
 
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    parent = None
+    font = QFont("Arial", 8, QFont.Bold)
+    app.setFont(font)
+    app.setStyle('Fusion')
     window = TravelReviewsUI(parent)
     window.show()
-    sys.exit(app.exec_())
+    if parent is None:
+        sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    main()

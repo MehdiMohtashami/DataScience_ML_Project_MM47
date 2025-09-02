@@ -31,7 +31,7 @@ class MplCanvas(FigureCanvas):
         self.fig = Figure(figsize=(width, height), dpi=dpi)
         self.axes = self.fig.add_subplot(111)
         super(MplCanvas, self).__init__(self.fig)
-        self.fig.tight_layout(pad=3.0)  # افزایش padding
+        self.fig.tight_layout(pad=3.0)
 
 
 class MainWindow(QMainWindow):
@@ -39,7 +39,7 @@ class MainWindow(QMainWindow):
         super().__init__(parent)
         self.setWindowTitle("QualitativeBankruptcy")
         self.setWindowTitle("Bankruptcy Prediction System")
-        self.setGeometry(100, 100, 1600, 900)  # افزایش سایز پنجره
+        self.setGeometry(100, 100, 1600, 900)
 
         # Load model and encoders
         try:
@@ -120,7 +120,7 @@ class MainWindow(QMainWindow):
             combo = QComboBox()
             combo.addItems(['Positive (P)', 'Average (A)', 'Negative (N)'])
             combo.setCurrentIndex(1)
-            combo.setMinimumHeight(30)  # افزایش ارتفاع combobox
+            combo.setMinimumHeight(30)
             input_layout.addRow(QLabel(feature + ":"), combo)
             self.input_fields[feature] = combo
 
@@ -146,7 +146,7 @@ class MainWindow(QMainWindow):
         left_layout.addWidget(self.predict_btn)
 
         self.back_button = QPushButton("Back to Main", self)
-        self.back_button.clicked.connect(self.close_and_go_back)  # متد close رو صدا میزنه
+        self.back_button.clicked.connect(self.close_and_go_back)
         self.back_button.setStyleSheet("""
                     QPushButton { 
                         background-color: gray; 
@@ -574,15 +574,18 @@ class MainWindow(QMainWindow):
     def close_and_go_back(self):
         self.close()
 
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-
-    # Set application style
+    font = QFont("Arial", 8, QFont.Bold)
+    app.setFont(font)
     app.setStyle('Fusion')
-    parent = None
-    # Create and show the main window
     window = MainWindow(parent)
     window.show()
+    if parent is None:
+        sys.exit(app.exec_())
 
-    sys.exit(app.exec_())
+if __name__ == '__main__':
+    main()

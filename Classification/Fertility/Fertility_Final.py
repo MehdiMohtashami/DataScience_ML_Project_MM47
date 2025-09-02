@@ -124,7 +124,7 @@ class FertilityApp(QMainWindow):
             label = QLabel(field + ":")
             label.setToolTip(tooltip)
             input_field = QLineEdit()
-            input_field.setPlaceholderText(f"Range: {min_val} to {max_val}")
+            input_field.setPlaceholderText(f"{min_val} to {max_val}")
             validator = QDoubleValidator(min_val, max_val, 4)
             validator.setNotation(QDoubleValidator.StandardNotation)
             input_field.setValidator(validator)
@@ -492,10 +492,17 @@ class FertilityApp(QMainWindow):
 
     def close_and_go_back(self):
         self.close()
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
 
+    font = QFont("Arial", 8, QFont.Bold)
+    app.setFont(font)
+    app.setStyle('Fusion')
+    window = FertilityApp(parent)
+    window.show()
+    if parent is None:
+        sys.exit(app.exec_())
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    parent = None
-    main_window = FertilityApp(parent)
-    main_window.show()
-    sys.exit(app.exec_())
+    main()

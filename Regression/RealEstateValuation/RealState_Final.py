@@ -423,9 +423,17 @@ class RealEstateApp(QMainWindow):
 
     def close_and_go_back(self):
         self.close()
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = RealEstateApp()
+    font = QFont("Arial", 8, QFont.Bold)
+    app.setFont(font)
+    app.setStyle('Fusion')
+    window = RealEstateApp(parent)
     window.show()
-    sys.exit(app.exec_())
+    if parent is None:
+        sys.exit(app.exec_())
+if __name__ == "__main__":
+    main()

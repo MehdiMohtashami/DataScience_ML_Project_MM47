@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
                              QLabel, QLineEdit, QPushButton, QTabWidget, QMessageBox, QComboBox)
-from PyQt5.QtGui import QDoubleValidator, QIntValidator
+from PyQt5.QtGui import QDoubleValidator, QIntValidator, QFont
 from PyQt5.QtCore import Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
@@ -287,10 +287,17 @@ class EnergyEfficiencyUI(QMainWindow):
 
     def close_and_go_back(self):
         self.close()
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    parent = None
+    font = QFont("Arial", 8, QFont.Bold)
+    app.setFont(font)
+    app.setStyle('Fusion')
     window = EnergyEfficiencyUI(parent)
     window.show()
-    sys.exit(app.exec_())
+    if parent is None:
+        sys.exit(app.exec_())
+if __name__ == '__main__':
+    main()

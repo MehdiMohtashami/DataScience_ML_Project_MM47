@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import sys
 import joblib
 import pandas as pd
@@ -12,7 +11,7 @@ from PyQt5.QtWidgets import (
     QFormLayout, QLineEdit, QComboBox, QPushButton, QLabel, QTabWidget, QMessageBox
 )
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QDoubleValidator, QIntValidator
+from PyQt5.QtGui import QDoubleValidator, QIntValidator, QFont
 
 
 class AutoMPGPredictor(QMainWindow):
@@ -28,27 +27,21 @@ class AutoMPGPredictor(QMainWindow):
         self.current_prediction = None
 
         def preprocess_data(df):
-            # بررسی و مدیریت مقادیر گمشده
             print("\nMissing values status before preprocessing:")
             print(df.isna().sum())
 
-            # ستون‌های عددی
             numeric_cols = ['displacement', 'horsepower', 'weight', 'acceleration']
 
-            # جایگزینی مقادیر گمشده با میانه
             for col in numeric_cols:
                 if df[col].dtype == 'object':
-                    # تبدیل به عددی و مدیریت مقادیر نامعتبر
                     df[col] = pd.to_numeric(df[col], errors='coerce')
 
                 median_val = df[col].median()
                 df[col].fillna(median_val, inplace=True)
 
-            # تبدیل origin به رشته
             origin_map = {1: 'American', 2: 'European', 3: 'Japanese'}
             df['origin'] = df['origin'].map(origin_map)
 
-            # حذف ستون غیرضروری
             if 'car name' in df.columns:
                 df.drop('car name', axis=1, inplace=True)
             if 'car_name' in df.columns:
@@ -146,7 +139,6 @@ class AutoMPGPredictor(QMainWindow):
             "   background-color: #45a049;"
             "}"
         )
-        # ایجاد یک دکمه برای بازگشت
         self.back_button = QPushButton("Back to Main", self)
         self.back_button.clicked.connect(self.close_and_go_back)  # متد close رو صدا میزنه
         self.back_button.setStyleSheet(
@@ -602,12 +594,17 @@ class AutoMPGPredictor(QMainWindow):
     def close_and_go_back(self):
         self.close()
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
 
-    # Set application style
-    app.setStyle("Fusion")
-    parent = None
+    font = QFont("Arial", 9, QFont.Bold)
+    app.setFont(font)
+    app.setStyle('Fusion')
     window = AutoMPGPredictor(parent)
     window.show()
-    sys.exit(app.exec_())
+    if parent is None:
+        sys.exit(app.exec_())
+if __name__ == "__main__":
+    main()

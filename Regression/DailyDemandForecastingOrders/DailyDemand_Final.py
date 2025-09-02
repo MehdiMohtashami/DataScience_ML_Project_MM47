@@ -158,9 +158,9 @@ class RegressionApp(QMainWindow):
             """
         )
 
-        # ایجاد یک دکمه برای بازگشت
+
         self.back_button = QPushButton("Back to Main", self)
-        self.back_button.clicked.connect(self.close_and_go_back)  # متد close رو صدا میزنه
+        self.back_button.clicked.connect(self.close_and_go_back)
         self.back_button.setStyleSheet(
             """
             QPushButton {
@@ -374,9 +374,17 @@ class RegressionApp(QMainWindow):
     def close_and_go_back(self):
         self.close()
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    parent = None
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
+
+    font = QFont("Arial", 10, QFont.Bold)
+    app.setFont(font)
+    app.setStyle('Fusion')
     window = RegressionApp(parent)
     window.show()
-    sys.exit(app.exec_())
+    if parent is None:
+        sys.exit(app.exec_())
+if __name__ == "__main__":
+    main()

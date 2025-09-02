@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel,
     QLineEdit, QPushButton, QTabWidget, QComboBox, QMessageBox
 )
-from PyQt5.QtGui import QDoubleValidator
+from PyQt5.QtGui import QDoubleValidator, QFont
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import seaborn as sns
@@ -19,22 +19,18 @@ class StockPredictionUI(QMainWindow):
         self.setWindowTitle("Stock Price Prediction")
         self.setGeometry(100, 100, 1200, 800)
 
-        # بارگذاری مدل و اشیاء ذخیره‌شده
         self.model = load_model('lstm_model.h5')
         self.scaler = joblib.load('scaler.joblib')
         self.label_encoder = joblib.load('label_encoder.joblib')
 
-        # ویجت اصلی
         self.main_widget = QWidget()
         self.setCentralWidget(self.main_widget)
         self.main_layout = QVBoxLayout(self.main_widget)
 
-        # اطلاعات مدل
         self.model_info = QLabel("Model: LSTM | Accuracy: 0.520")
         self.model_info.setStyleSheet("font-size: 16px; font-weight: bold;")
         self.main_layout.addWidget(self.model_info)
 
-        # ویژگی‌ها
         self.features = [
             'stock_encoded', 'close', 'volume_log', 'percent_change_price',
             'price_range', 'volume_ratio', 'volatility',
@@ -45,7 +41,6 @@ class StockPredictionUI(QMainWindow):
         self.input_layout = QVBoxLayout()
         self.main_layout.addLayout(self.input_layout)
 
-        # بازه‌ها
         self.ranges = {
             'stock_encoded': (0, 4),
             'close': (0, 1),
@@ -78,7 +73,6 @@ class StockPredictionUI(QMainWindow):
             'lag_volume_ratio': 'Enter lagged volume ratio (0.5 to 2)'
         }
 
-        # ایجاد فیلد ورودی
         for feature in self.features:
             layout = QHBoxLayout()
             label = QLabel(f"{feature}:")
@@ -96,27 +90,26 @@ class StockPredictionUI(QMainWindow):
             self.input_fields[feature] = input_field
             self.input_layout.addLayout(layout)
 
-        # دکمه پیش‌بینی
         self.predict_button = QPushButton("Predict")
         self.predict_button.clicked.connect(self.predict)
         self.main_layout.addWidget(self.predict_button)
 
-        # نتیجه
+        self.back_btn = QPushButton("Back to Main")
+        self.back_btn.clicked.connect(self.go_back)
+        self.main_layout.addWidget(self.back_btn)
+
         self.result_label = QLabel("Prediction: Not yet predicted")
         self.main_layout.addWidget(self.result_label)
 
-        # تب‌ها
         self.tabs = QTabWidget()
         self.main_layout.addWidget(self.tabs)
 
-        # تب تحلیل
         self.pred_analysis_tab = QWidget()
         self.pred_analysis_layout = QVBoxLayout(self.pred_analysis_tab)
         self.tabs.addTab(self.pred_analysis_tab, "Prediction Analysis")
         self.pred_canvas1 = None
         self.pred_canvas2 = None
 
-        # تب رابطه فیچرها
         self.feat_relation_tab = QWidget()
         self.feat_relation_layout = QVBoxLayout(self.feat_relation_tab)
         self.tabs.addTab(self.feat_relation_tab, "Feature Relationship")
@@ -148,7 +141,6 @@ class StockPredictionUI(QMainWindow):
             QMessageBox.critical(self, "Input Error", "Please enter valid numbers")
             return
 
-        # reshape درست
         arr = np.array([input_data] * 5, dtype=np.float32).reshape(1, 5, len(self.features))
 
         try:
@@ -214,9 +206,20 @@ class StockPredictionUI(QMainWindow):
                 self.rel_canvas2 = FigureCanvas(fig2)
                 self.feat_relation_layout.addWidget(self.rel_canvas2)
 
+    def go_back(self):
+        self.close()
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
+
+    font = QFont("Arial", 8, QFont.Bold)
+    app.setFont(font)
+    app.setStyle('Fusion')
     window = StockPredictionUI()
     window.show()
-    sys.exit(app.exec_())
+    if parent is None:
+        sys.exit(app.exec_())
+if __name__ == '__main__':
+    main()

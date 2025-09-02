@@ -19,7 +19,6 @@ from sklearn.inspection import permutation_importance
 plt.style.use('seaborn-v0_8')
 sns.set_palette("Set2")
 
-
 class HepatitisPredictorApp(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -59,39 +58,44 @@ class HepatitisPredictorApp(QMainWindow):
         input_group = QGroupBox("Patient Information")
         input_layout = QGridLayout(input_group)
 
-        # Define input fields with validation
+        # Define input fields
         self.input_fields = {}
         fields = [
             ('Age', 'years (7-78)', 'int'),
             ('Sex', '1:Male, 2:Female', 'int'),
-            ('Steroid', '1:No, 2:Yes', 'int'),
-            ('Antivirals', '1:No, 2:Yes', 'int'),
-            ('Fatigue', '1:No, 2:Yes', 'int'),
-            ('Malaise', '1:No, 2:Yes', 'int'),
-            ('Anorexia', '1:No, 2:Yes', 'int'),
-            ('Liver Big', '1:No, 2:Yes', 'int'),
-            ('Liver Firm', '1:No, 2:Yes', 'int'),
-            ('Spleen Palpable', '1:No, 2:Yes', 'int'),
-            ('Spiders', '1:No, 2:Yes', 'int'),
-            ('Ascites', '1:No, 2:Yes', 'int'),
-            ('Varices', '1:No, 2:Yes', 'int'),
+            ('Steroid', 'Select Yes/No', 'combo'),
+            ('Antivirals', 'Select Yes/No', 'combo'),
+            ('Fatigue', 'Select Yes/No', 'combo'),
+            ('Malaise', 'Select Yes/No', 'combo'),
+            ('Anorexia', 'Select Yes/No', 'combo'),
+            ('Liver Big', 'Select Yes/No', 'combo'),
+            ('Liver Firm', 'Select Yes/No', 'combo'),
+            ('Spleen Palpable', 'Select Yes/No', 'combo'),
+            ('Spiders', 'Select Yes/No', 'combo'),
+            ('Ascites', 'Select Yes/No', 'combo'),
+            ('Varices', 'Select Yes/No', 'combo'),
             ('Bilirubin', 'e.g., 0.39, 0.80, 1.20', 'float'),
             ('Alk Phosphate', 'e.g., 33, 80, 120', 'float'),
             ('Sgot', 'e.g., 13, 100, 200', 'float'),
             ('Albumin', 'e.g., 2.1, 3.0, 3.8', 'float'),
             ('Protime', 'e.g., 60, 70, 80', 'float'),
-            ('Histology', '1:No, 2:Yes', 'int')
+            ('Histology', 'Select Yes/No', 'combo')
         ]
 
         for i, (field, placeholder, field_type) in enumerate(fields):
             label = QLabel(field)
-            input_field = QLineEdit()
-            input_field.setPlaceholderText(placeholder)
-
-            if field_type == 'int':
-                input_field.setValidator(QIntValidator())
+            if field_type == 'combo':
+                input_field = QComboBox()
+                input_field.addItem("No", 1)
+                input_field.addItem("Yes", 2)
+                input_field.setCurrentIndex(-1)  # No default selection
             else:
-                input_field.setValidator(QDoubleValidator())
+                input_field = QLineEdit()
+                input_field.setPlaceholderText(placeholder)
+                if field_type == 'int':
+                    input_field.setValidator(QIntValidator())
+                else:
+                    input_field.setValidator(QDoubleValidator())
 
             self.input_fields[field] = input_field
             input_layout.addWidget(label, i, 0)
@@ -105,8 +109,8 @@ class HepatitisPredictorApp(QMainWindow):
         self.predict_btn.setStyleSheet("QPushButton { background-color: #4CAF50; color: white; font-weight: bold; }")
         left_layout.addWidget(self.predict_btn)
 
-        self.back_button = QPushButton("Back to Main", self)
-        self.back_button.clicked.connect(self.close_and_go_back)  # متد close رو صدا میزنه
+        self.back_button = QPushButton("Back to Main")
+        self.back_button.clicked.connect(self.close_and_go_back)
         self.back_button.setStyleSheet("QPushButton { background-color: gray; color: white; font-weight: bold; }")
         left_layout.addWidget(self.back_button)
 
@@ -204,7 +208,6 @@ class HepatitisPredictorApp(QMainWindow):
             self.preprocessor = joblib.load('hepatitis_preprocessor.pkl')
 
             # For demonstration, we'll create some sample training data
-            # In a real scenario, you would load your actual training data
             self.X_train = pd.DataFrame(np.random.randn(100, 19),
                                         columns=self.input_fields.keys())
             self.y_train = np.random.choice([1, 2], 100)
@@ -217,18 +220,25 @@ class HepatitisPredictorApp(QMainWindow):
         # Validate inputs
         patient_data = {}
         for field, input_field in self.input_fields.items():
-            value = input_field.text().strip()
-            if not value:
-                QMessageBox.warning(self, "Missing Data", f"Please enter a value for {field}")
-                return
-            try:
-                if field in ['Age', 'Bilirubin', 'Alk Phosphate', 'Sgot', 'Albumin', 'Protime']:
-                    patient_data[field] = float(value)
-                else:
-                    patient_data[field] = int(value)
-            except ValueError:
-                QMessageBox.warning(self, "Invalid Data", f"Please enter a valid number for {field}")
-                return
+            if isinstance(input_field, QComboBox):
+                value = input_field.currentData()  # Get the numerical value (1 or 2)
+                if value is None:
+                    QMessageBox.warning(self, "Missing Data", f"Please select a value for {field}")
+                    return
+            else:
+                value = input_field.text().strip()
+                if not value:
+                    QMessageBox.warning(self, "Missing Data", f"Please enter a value for {field}")
+                    return
+                try:
+                    if field in ['Age', 'Bilirubin', 'Alk Phosphate', 'Sgot', 'Albumin', 'Protime']:
+                        value = float(value)
+                    else:
+                        value = int(value)
+                except ValueError:
+                    QMessageBox.warning(self, "Invalid Data", f"Please enter a valid number for {field}")
+                    return
+            patient_data[field] = value
 
         # Convert to DataFrame for prediction
         patient_df = pd.DataFrame([patient_data])
@@ -277,7 +287,6 @@ class HepatitisPredictorApp(QMainWindow):
 
     def plot_confusion_matrix(self):
         # For demonstration, create a sample confusion matrix
-        # In a real scenario, you would use your actual test results
         self.confusion_figure.clear()
         ax = self.confusion_figure.add_subplot(111)
 
@@ -327,7 +336,6 @@ class HepatitisPredictorApp(QMainWindow):
         ax = self.importance_figure.add_subplot(111)
 
         # Calculate feature importance using permutation importance
-        # Note: This can be computationally expensive for large datasets
         result = permutation_importance(
             self.model, self.X_train, self.y_train, n_repeats=10, random_state=42
         )
@@ -354,7 +362,6 @@ class HepatitisPredictorApp(QMainWindow):
         ax = self.shap_figure.add_subplot(111)
 
         # For demonstration, create a mock SHAP plot
-        # In a real scenario, you would use the SHAP library
         feature_names = list(self.input_fields.keys())
         importance_values = np.random.randn(len(feature_names))
 
@@ -396,8 +403,6 @@ class HepatitisPredictorApp(QMainWindow):
 
         # Select two most important features for scatter plot
         feature_names = list(self.input_fields.keys())
-        # For demonstration, use the first two features
-        # In a real scenario, you would select based on feature importance
         x_feature, y_feature = feature_names[0], feature_names[1]
 
         # Create scatter plot
@@ -423,10 +428,18 @@ class HepatitisPredictorApp(QMainWindow):
     def close_and_go_back(self):
         self.close()
 
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    parent=None
+    font = QFont("Arial", 8, QFont.Bold)
+    app.setFont(font)
+    app.setStyle('Fusion')
     window = HepatitisPredictorApp(parent)
     window.show()
-    sys.exit(app.exec_())
+    if parent is None:
+        sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    main()

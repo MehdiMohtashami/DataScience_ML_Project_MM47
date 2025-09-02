@@ -261,16 +261,16 @@ print(ct)
 
 # Note: The cluster numbers are arbitrary. We need to see if they group similar true labels together.
 
-# پس از آموزش و رضایت از مدل نهایی (مثلاً Linear SVM)
+# After training and satisfied with the final model (e.g. Linear SVM)
 # import joblib
 #
-# # ذخیره مدل
+# # Save the model
 # best_model = SVC(kernel='linear', random_state=42)
-# best_model.fit(X_train_scaled, y_train) # حتماً روی داده scaled آموزش بده
+# best_model.fit(X_train_scaled, y_train) # Make sure to train on scaled data
 # joblib.dump(best_model, 'user_knowledge_model.pkl')
 #
-# # ذخیره Scaler (بسیار مهم!)
+# # Save the Scaler (very important!)
 # joblib.dump(scaler, 'scaler.pkl')
 #
-# # ذخیره LabelEncoder (برای decode کردن پیش‌بینی‌ها)
+# # Save the LabelEncoder (to decode the predictions)
 # joblib.dump(le, 'label_encoder.pkl')

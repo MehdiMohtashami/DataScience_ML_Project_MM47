@@ -158,136 +158,133 @@
 # cv_scores = cross_val_score(best_model, X_train_scaled, y_train, cv=5)
 # print(f'Cross-Validation Scores: {cv_scores}')
 # print(f'Mean CV Accuracy: {cv_scores.mean():.4f}')
-
-import joblib
-import pandas as pd
-from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LogisticRegression
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.svm import SVC
-from sklearn.neighbors import KNeighborsClassifier
-from xgboost import XGBClassifier
-
-# Load and preprocess data (same as before)
-df1 = pd.read_csv('datatraining.csv')
-df2 = pd.read_csv('datatest.csv')
-df3 = pd.read_csv('datatest2.csv')
-
-df1['source'] = 'training'
-df2['source'] = 'test1'
-df3['source'] = 'test2'
-
-df_combined = pd.concat([df1, df2, df3], ignore_index=True)
-
-# Preprocess date column
-df_combined['date'] = pd.to_datetime(df_combined['date'], format='%m/%d/%Y %H:%M')
-df_combined['hour'] = df_combined['date'].dt.hour
-df_combined['day_of_week'] = df_combined['date'].dt.dayofweek
-df_combined['month'] = df_combined['date'].dt.month
-df_combined.drop('date', axis=1, inplace=True)
-
-# Prepare features and target
-numeric_cols = ['Temperature', 'Humidity', 'Light', 'CO2', 'HumidityRatio', 'hour', 'day_of_week', 'month']
-X = df_combined[numeric_cols]
-y = df_combined['Occupancy']
-
-# Scale the data
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
-
-# Initialize all models
-models = {
-    'Logistic_Regression': LogisticRegression(),
-    'Decision_Tree': DecisionTreeClassifier(),
-    'Random_Forest': RandomForestClassifier(),
-    'SVM': SVC(probability=True),  # probability=True برای امکان پیش‌بینی probability
-    'KNN': KNeighborsClassifier(),
-    'Gradient_Boosting': GradientBoostingClassifier(),
-    'XGBoost': XGBClassifier()
-}
-
-# Train and save all models
-for model_name, model in models.items():
-    print(f"Training {model_name}...")
-    model.fit(X_scaled, y)
-
-    # Save model
-    joblib.dump(model, f'{model_name}_model.pkl')
-    print(f"{model_name} saved successfully!")
-
-# Save the scaler
-joblib.dump(scaler, 'standard_scaler.pkl')
-print("Scaler saved successfully!")
-
-print("\nAll models and scaler have been saved successfully!")
-
-import joblib
-import pandas as pd
-
-
-def load_model(model_name):
-    """لود مدل مورد نظر"""
-    return joblib.load(f'{model_name}_model.pkl')
-
-
-def load_scaler():
-    """لود اسکیلر"""
-    return joblib.load('standard_scaler.pkl')
-
-
-# مثال استفاده از مدل‌های مختلف برای پیش‌بینی
-def predict_occupancy(new_data, model_name='XGBoost'):
-    """
-    پیش‌بینی occupancy با مدل مورد نظر
-
-    Parameters:
-    new_data (DataFrame): داده جدید برای پیش‌بینی
-    model_name (str): نام مدل ('XGBoost', 'Random_Forest', etc.)
-
-    Returns:
-    prediction: پیش‌بینی (0 یا 1)
-    probability: احتمال پیش‌بینی
-    """
-    # لود مدل و اسکیلر
-    model = load_model(model_name)
-    scaler = load_scaler()
-
-    # Scale داده جدید
-    new_data_scaled = scaler.transform(new_data)
-
-    # پیش‌بینی
-    prediction = model.predict(new_data_scaled)
-    probability = model.predict_proba(new_data_scaled)
-
-    return prediction[0], probability[0]
-
-
-# مثال داده جدید برای تست
-new_data_example = pd.DataFrame({
-    'Temperature': [23.0],
-    'Humidity': [26.0],
-    'Light': [500.0],
-    'CO2': [700.0],
-    'HumidityRatio': [0.0048],
-    'hour': [14],
-    'day_of_week': [2],
-    'month': [2]
-})
-
-# تست تمام مدل‌ها
-model_names = ['Logistic_Regression', 'Decision_Tree', 'Random_Forest',
-               'SVM', 'KNN', 'Gradient_Boosting', 'XGBoost']
-
-print("Testing all models with sample data:")
-print("=" * 50)
-
-for model_name in model_names:
-    try:
-        prediction, probability = predict_occupancy(new_data_example, model_name)
-        status = "Occupied" if prediction == 1 else "Not Occupied"
-        confidence = probability[prediction]
-
-        print(f"{model_name:20}: {status:15} (Confidence: {confidence:.2%})")
-    except Exception as e:
-        print(f"{model_name:20}: Error - {str(e)}")
+#
+# import joblib
+# import pandas as pd
+# from sklearn.preprocessing import StandardScaler
+# from sklearn.linear_model import LogisticRegression
+# from sklearn.tree import DecisionTreeClassifier
+# from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+# from sklearn.svm import SVC
+# from sklearn.neighbors import KNeighborsClassifier
+# from xgboost import XGBClassifier
+#
+# # Load and preprocess data (same as before)
+# df1 = pd.read_csv('datatraining.csv')
+# df2 = pd.read_csv('datatest.csv')
+# df3 = pd.read_csv('datatest2.csv')
+#
+# df1['source'] = 'training'
+# df2['source'] = 'test1'
+# df3['source'] = 'test2'
+#
+# df_combined = pd.concat([df1, df2, df3], ignore_index=True)
+#
+# # Preprocess date column
+# df_combined['date'] = pd.to_datetime(df_combined['date'], format='%m/%d/%Y %H:%M')
+# df_combined['hour'] = df_combined['date'].dt.hour
+# df_combined['day_of_week'] = df_combined['date'].dt.dayofweek
+# df_combined['month'] = df_combined['date'].dt.month
+# df_combined.drop('date', axis=1, inplace=True)
+#
+# # Prepare features and target
+# numeric_cols = ['Temperature', 'Humidity', 'Light', 'CO2', 'HumidityRatio', 'hour', 'day_of_week', 'month']
+# X = df_combined[numeric_cols]
+# y = df_combined['Occupancy']
+#
+# # Scale the data
+# scaler = StandardScaler()
+# X_scaled = scaler.fit_transform(X)
+#
+# # Initialize all models
+# models = {
+#     'Logistic_Regression': LogisticRegression(),
+#     'Decision_Tree': DecisionTreeClassifier(),
+#     'Random_Forest': RandomForestClassifier(),
+#     'SVM': SVC(probability=True),
+#     'KNN': KNeighborsClassifier(),
+#     'Gradient_Boosting': GradientBoostingClassifier(),
+#     'XGBoost': XGBClassifier()
+# }
+#
+# # Train and save all models
+# for model_name, model in models.items():
+#     print(f"Training {model_name}...")
+#     model.fit(X_scaled, y)
+#
+#     # Save model
+#     joblib.dump(model, f'{model_name}_model.pkl')
+#     print(f"{model_name} saved successfully!")
+#
+# # Save the scaler
+# joblib.dump(scaler, 'standard_scaler.pkl')
+# print("Scaler saved successfully!")
+#
+# print("\nAll models and scaler have been saved successfully!")
+#
+# import joblib
+# import pandas as pd
+#
+#
+# def load_model(model_name):
+#     """Load the desired model"""
+#     return joblib.load(f'{model_name}_model.pkl')
+#
+#
+# def load_scaler():
+#     """Load Scaler"""
+#     return joblib.load('standard_scaler.pkl')
+#
+#
+# # مثال استفاده از مدل‌های مختلف برای پیش‌بینی
+# def predict_occupancy(new_data, model_name='XGBoost'):
+#     """
+#     Predict occupancy with the given model
+#
+#     Parameters:
+#     new_data (DataFrame): New data to predict
+#     model_name (str): Model name ('XGBoost', 'Random_Forest', etc.)
+#
+#     Returns:
+#     prediction: Prediction (0 or 1)
+#     probability: Prediction probability
+#     """
+#     # Load model and scaler
+#     model = load_model(model_name)
+#     scaler = load_scaler()
+#
+#     new_data_scaled = scaler.transform(new_data)
+#
+#     prediction = model.predict(new_data_scaled)
+#     probability = model.predict_proba(new_data_scaled)
+#
+#     return prediction[0], probability[0]
+#
+#
+# # New data example for testing
+# new_data_example = pd.DataFrame({
+#     'Temperature': [23.0],
+#     'Humidity': [26.0],
+#     'Light': [500.0],
+#     'CO2': [700.0],
+#     'HumidityRatio': [0.0048],
+#     'hour': [14],
+#     'day_of_week': [2],
+#     'month': [2]
+# })
+#
+# model_names = ['Logistic_Regression', 'Decision_Tree', 'Random_Forest',
+#                'SVM', 'KNN', 'Gradient_Boosting', 'XGBoost']
+#
+# print("Testing all models with sample data:")
+# print("=" * 50)
+#
+# for model_name in model_names:
+#     try:
+#         prediction, probability = predict_occupancy(new_data_example, model_name)
+#         status = "Occupied" if prediction == 1 else "Not Occupied"
+#         confidence = probability[prediction]
+#
+#         print(f"{model_name:20}: {status:15} (Confidence: {confidence:.2%})")
+#     except Exception as e:
+#         print(f"{model_name:20}: Error - {str(e)}")

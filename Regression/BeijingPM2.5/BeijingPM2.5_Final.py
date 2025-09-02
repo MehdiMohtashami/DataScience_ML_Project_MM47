@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QH
                              QLabel, QLineEdit, QPushButton, QFormLayout, QGroupBox,
                              QScrollArea, QTabWidget, QComboBox, QMessageBox)
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QDoubleValidator, QIntValidator
+from PyQt5.QtGui import QDoubleValidator, QIntValidator, QFont
 
 
 class PM25PredictorApp(QMainWindow):
@@ -388,10 +388,17 @@ class PM25PredictorApp(QMainWindow):
 
     def close_and_go_back(self):
         self.close()
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    parent = None
+    font = QFont("Arial", 10, QFont.Bold)
+    app.setFont(font)
+    app.setStyle('Fusion')
     window = PM25PredictorApp(parent)
     window.show()
-    sys.exit(app.exec_())
+    if parent is None:
+        sys.exit(app.exec_())
+if __name__ == "__main__":
+    main()

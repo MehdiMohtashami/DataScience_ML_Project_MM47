@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QH
                              QLabel, QLineEdit, QPushButton, QGroupBox, QFormLayout,
                              QMessageBox, QScrollArea, QTabWidget)
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QDoubleValidator
+from PyQt5.QtGui import QDoubleValidator, QFont
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -86,7 +86,7 @@ class GlassClassifierApp(QMainWindow):
         left_layout.addWidget(self.predict_btn)
 
         self.back_button = QPushButton("Back to Main", self)
-        self.back_button.clicked.connect(self.close_and_go_back)  # متد close
+        self.back_button.clicked.connect(self.close_and_go_back)
         self.back_button.setStyleSheet(
             "QPushButton { background-color: gray; color: white; font-weight: bold; padding: 10px; }")
         left_layout.addWidget(self.back_button)
@@ -370,12 +370,17 @@ class GlassClassifierApp(QMainWindow):
     def close_and_go_back(self):
         self.close()
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
+
+    font = QFont("Arial", 10, QFont.Bold)
+    app.setFont(font)
     app.setStyle('Fusion')
-    parent = None
     window = GlassClassifierApp(parent)
     window.show()
-    window = GlassClassifierApp()
-    window.show()
-    sys.exit(app.exec_())
+    if parent is None:
+        sys.exit(app.exec_())
+if __name__ == '__main__':
+    main()
