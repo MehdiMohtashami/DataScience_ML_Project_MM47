@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                              QHBoxLayout, QGroupBox, QLabel, QLineEdit, QPushButton,
                              QTabWidget, QMessageBox, QFormLayout, QScrollArea)
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QDoubleValidator, QIntValidator
+from PyQt5.QtGui import QDoubleValidator, QIntValidator, QFont
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -97,7 +97,7 @@ class BloodDonationApp(QMainWindow):
 
         #Back to Main
         self.back_button = QPushButton("Back to Main", self)
-        self.back_button.clicked.connect(self.close_and_go_back)  # متد close رو صدا میزنه
+        self.back_button.clicked.connect(self.close_and_go_back)
         self.back_button.setStyleSheet(
             "QPushButton { background-color: gray; color: white; font-weight: bold; }")
         left_layout.addWidget(self.back_button)
@@ -227,32 +227,13 @@ class BloodDonationApp(QMainWindow):
 
     def load_model_and_data(self):
         try:
-            # دریافت مسیر دایرکتوری فعلی
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-
-            # استفاده از مسیرهای مطلق برای بارگیری فایل‌ها
-            self.model = joblib.load(os.path.join(current_dir, 'best_model_real.joblib'))
-            self.scaler = joblib.load(os.path.join(current_dir, 'scaler_real.joblib'))
-            self.feature_names = joblib.load(os.path.join(current_dir, 'feature_names_real.joblib'))
-
-            # Load original data for visualization
-            self.df = pd.read_csv(os.path.join(current_dir, 'Autism-Adult-Data.csv'))
-            self.preprocess_data()
-
-            self.model_accuracy = 0.9858# From our previous evaluation
-
-        except Exception as e:
-            QMessageBox.critical(self, "Error", f"Failed to load model: {str(e)}")
-            sys.exit(1)
-    def load_model_and_data(self):
-        try:
             current_dir = os.path.dirname(os.path.abspath(__file__))
             print(f"Current directory: {current_dir}")
             print(f"Files in directory: {os.listdir(current_dir)}")
-            # دریافت مسیر دایرکتوری فعلی (پوشه ای که این فایل در آن قرار دارد)
+            # Get the current directory path (the folder where this file is located)
             current_dir = os.path.dirname(os.path.abspath(__file__))
 
-            # استفاده از مسیرهای مطلق برای بارگیری فایل‌ها
+            # Using absolute paths to download files
             # self.model = joblib.load(os.path.join(current_dir, 'logistic_regression_model.pkl'))
             self.model = joblib.load(os.path.join(current_dir, 'logistic_regression_model.pkl'))
             self.scaler = joblib.load(os.path.join(current_dir, 'scaler.pkl'))
@@ -444,17 +425,17 @@ class BloodDonationApp(QMainWindow):
 
 
 def main(parent=None):
-    app = QApplication(sys.argv)
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
 
-    # Set application style
+    font = QFont("Arial", 9, QFont.Bold)
+    app.setFont(font)
     app.setStyle('Fusion')
-
     window = BloodDonationApp(parent)
     window.show()
-    window = BloodDonationApp()
-    window.show()
-
-    sys.exit(app.exec_())
+    if parent is None:
+        sys.exit(app.exec_())
 
 
 if __name__ == '__main__':

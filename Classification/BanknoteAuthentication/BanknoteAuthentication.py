@@ -197,7 +197,7 @@ print(classification_report(y_test, y_pred,
                             target_names=['Forged (0)', 'Genuine (1)']))
 
 # Feature importance (if available)
-if hasattr(best_model, 'feature_importances_'):
+if hasattr(best_model, 'feature_importance_'):
     feature_importance = pd.DataFrame({
         'feature': X.columns,
         'importance': best_model.feature_importances_
@@ -218,10 +218,10 @@ print("=" * 50)
 print(f"Based on our analysis, the best model for this dataset is: {best_model_name}")
 print(f"With an accuracy of: {results[best_model_name]['accuracy']:.4f}")
 
-# # هایپرپارامتر تیونینگ برای مدل‌های برتر
+# # Hyperparameter tuning for superior models
 # from sklearn.model_selection import GridSearchCV
 #
-# # هایپرپارامتر تیونینگ برای SVM
+# # Hyperparameter tuning for SVM
 # param_grid_svm = {
 #     'C': [0.1, 1, 10, 100],
 #     'gamma': ['scale', 'auto', 0.1, 0.01],
@@ -235,7 +235,7 @@ print(f"With an accuracy of: {results[best_model_name]['accuracy']:.4f}")
 # print("Best SVM Parameters:", grid_svm.best_params_)
 # print("Best SVM Score:", grid_svm.best_score_)
 #
-# # هایپرپارامتر تیونینگ برای KNN
+# # Hyperparameter tuning for KNN
 # param_grid_knn = {
 #     'n_neighbors': range(3, 15),
 #     'weights': ['uniform', 'distance'],
@@ -249,11 +249,11 @@ print(f"With an accuracy of: {results[best_model_name]['accuracy']:.4f}")
 # print("Best KNN Parameters:", grid_knn.best_params_)
 # print("Best KNN Score:", grid_knn.best_score_)
 
-# تحلیل Feature Importance برای مدل‌های ensemble
+# Feature Importance Analysis for Ensemble Models
 best_rf = RandomForestClassifier(random_state=42)
 best_rf.fit(X_train_scaled, y_train)
 
-# گرفتن اهمیت ویژگی‌ها
+# Getting the importance of features
 feature_importance = pd.DataFrame({
     'feature': X.columns,
     'importance': best_rf.feature_importances_
@@ -262,20 +262,20 @@ feature_importance = pd.DataFrame({
 print("Feature Importance (Random Forest):")
 print(feature_importance)
 
-# نمودار اهمیت ویژگی‌ها
+# Feature importance chart
 plt.figure(figsize=(10, 6))
 sns.barplot(x='importance', y='feature', data=feature_importance)
 plt.title('Feature Importance - Random Forest')
 plt.tight_layout()
 plt.show()
 
-# اعتبارسنجی قوی‌تر با Stratified K-Fold
+# Stronger Validation with Stratified K-Fold
 from sklearn.model_selection import StratifiedKFold
 
-# استفاده از 10-fold cross-validation
+# Using 10-fold cross-validation
 cv = StratifiedKFold(n_splits=10, shuffle=True, random_state=42)
 
-# ارزیابی مدل‌ها با CV پیشرفته
+# Evaluating models with advanced CV
 models_advanced = {
     'SVM': SVC(kernel='rbf', C=10, gamma='scale', random_state=42),
     'KNN': KNeighborsClassifier(n_neighbors=5, weights='distance', metric='manhattan'),
@@ -287,7 +287,7 @@ for name, model in models_advanced.items():
                                cv=cv, scoring='accuracy', n_jobs=-1)
     print(f"{name} - CV Scores: {cv_scores.mean():.4f} (±{cv_scores.std():.4f})")
 
-# رسم learning curves برای بررسی overfitting
+# Plotting learning curves to check overfitting
 from sklearn.model_selection import learning_curve
 
 
@@ -320,7 +320,7 @@ def plot_learning_curve(estimator, title, X, y, cv=None, n_jobs=-1):
     return plt
 
 
-# رسم learning curve برای SVM
+# Plotting the learning curve for SVM
 plot_learning_curve(SVC(kernel='rbf', C=10, random_state=42),
                     "Learning Curve (SVM)",
                     X_train_scaled, y_train, cv=5)
@@ -328,11 +328,11 @@ plt.show()
 #
 # import joblib
 #
-# # ذخیره بهترین مدل
+# # Save the best model
 # best_model = SVC(kernel='rbf', C=10, gamma='scale', random_state=42)
 # best_model.fit(X_train_scaled, y_train)
 #
-# # ذخیره مدل و scaler
+# # Save model and scaler
 # joblib.dump(best_model, 'banknote_svm_model.pkl')
 # joblib.dump(scaler, 'scaler.pkl')
 #

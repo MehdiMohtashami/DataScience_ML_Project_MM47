@@ -190,7 +190,7 @@ class CreditCardPredictor(QMainWindow):
                    }
                """)
         back_button.clicked.connect(self.close_and_go_back)
-        left_layout.addWidget(back_button)# متد close رو صدا میزنه
+        left_layout.addWidget(back_button)
 
         # Prediction result
         self.result_label = QLabel("Please enter customer data and click 'Predict'")
@@ -317,7 +317,7 @@ class CreditCardPredictor(QMainWindow):
                 child.widget().deleteLater()
 
     def create_feature_importance_chart(self):
-        # Get feature importances
+        # Get feature importance
         importances = self.model.feature_importances_
         indices = np.argsort(importances)[::-1]
 
@@ -326,7 +326,7 @@ class CreditCardPredictor(QMainWindow):
         self.canvases.append(canvas1)
         ax1 = canvas1.axes
 
-        # Plot feature importances
+        # Plot feature importance
         ax1.barh(range(len(indices)), importances[indices], align='center', color='skyblue')
         ax1.set_yticks(range(len(indices)))
         ax1.set_yticklabels([self.feature_names[i] for i in indices])
@@ -340,7 +340,7 @@ class CreditCardPredictor(QMainWindow):
 
         self.feature_importance_layout.addWidget(canvas1)
 
-        # Chart 2: Pie chart of top 8 features - با استفاده از legend به جای برچسب‌های مستقیم
+        # Chart 2: Pie chart of top 8 features - using legend instead of direct labels
         canvas2 = MplCanvas(self, width=10, height=8)
         self.canvases.append(canvas2)
         ax2 = canvas2.axes
@@ -351,21 +351,21 @@ class CreditCardPredictor(QMainWindow):
         top_importances = importances[top_indices]
         top_features = [self.feature_names[i] for i in top_indices]
 
-        # Create pie chart با legend خارج از نمودار
+        # Create pie chart with legend outside the chart
         wedges, texts, autotexts = ax2.pie(top_importances, autopct='%1.1f%%',
                                            startangle=90, colors=plt.cm.Set3(np.linspace(0, 1, top_n)))
         ax2.set_title(f'Top {top_n} Most Important Features', fontsize=16, fontweight='bold')
 
-        # بهبود خوانایی
+        # Improved readability
         for autotext in autotexts:
             autotext.set_color('white')
             autotext.set_fontweight('bold')
 
-        # اضافه کردن legend در خارج از نمودار
+        # Adding a legend outside the chart
         ax2.legend(wedges, top_features, title="Features",
                    loc="center left", bbox_to_anchor=(1, 0, 0.5, 1))
 
-        # تنظیم layout برای جا دادن legend
+        # Adjust the layout to accommodate the legend
         canvas2.fig.tight_layout()
 
         self.feature_importance_layout.addWidget(canvas2)
@@ -444,7 +444,7 @@ class CreditCardPredictor(QMainWindow):
         ax2.grid(axis='x', alpha=0.3)
         ax2.axvline(base_value, color='gray', linestyle='--', alpha=0.7)
 
-        # تنظیم layout برای جلوگیری از برش برچسب‌ها
+        # Adjust layout to prevent labels from being cut off
         canvas2.fig.tight_layout()
 
         self.prediction_analysis_layout.addWidget(canvas2)
@@ -534,16 +534,25 @@ class CreditCardPredictor(QMainWindow):
         # Add colorbar
         plt.colorbar(im, ax=ax2)
 
-        # تنظیم layout برای جلوگیری از برش برچسب‌ها
+        # Adjust layout to prevent labels from being cut off
         canvas2.fig.tight_layout()
 
         self.feature_relationships_layout.addWidget(canvas2)
 
     def close_and_go_back(self):
         self.close()
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
+
+    font = QFont("Arial", 8, QFont.Bold)
+    app.setFont(font)
+    app.setStyle('Fusion')
+    window = CreditCardPredictor()
+    window.show()
+    if parent is None:
+        sys.exit(app.exec_())
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    predictor = CreditCardPredictor()
-    predictor.show()
-    sys.exit(app.exec_())
+    main()

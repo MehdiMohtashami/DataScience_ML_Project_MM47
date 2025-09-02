@@ -163,7 +163,7 @@ class MainWindow(QMainWindow):
         left_layout.addWidget(predict_btn)
 
         back_button = QPushButton("Back to Main", self)
-        back_button.clicked.connect(self.close_and_go_back) # متد close رو صدا میزنه
+        back_button.clicked.connect(self.close_and_go_back)
         left_layout.addWidget(back_button)
 
         # Add left panel to the main layout
@@ -412,7 +412,7 @@ class MainWindow(QMainWindow):
                 self.canvas5.fig.tight_layout()
                 self.canvas5.draw()
 
-            # Plot 6: Distribution of most important feature
+            # Plot 6: Distribution of the most important feature
             if len(self.sorted_features) >= 1:
                 most_important = self.sorted_features[0]
                 idx = self.current_prediction['features'].index(most_important)
@@ -441,13 +441,18 @@ class MainWindow(QMainWindow):
 
     def close_and_go_back(self):
         self.close() #
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
 
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    parent = None
+    font = QFont("Arial", 8, QFont.Bold)
+    app.setFont(font)
+    app.setStyle('Fusion')
     window = MainWindow(parent)
     window.show()
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec_())
+    if parent is None:
+        sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    main()

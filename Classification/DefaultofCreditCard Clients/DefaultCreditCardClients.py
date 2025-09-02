@@ -1,23 +1,3 @@
-# import pandas as  pd
-# df_dataset= pd.read_csv('default of credit card clients.csv')
-# #For default of credit card clients.csv
-# print('#'*40,'For default of credit card clients.csv', '#'*40)
-# print(df_dataset.describe(include='all').to_string())
-# print(df_dataset.shape)
-# print(df_dataset.columns)
-# print(df_dataset.info)
-# print(df_dataset.dtypes)
-# print(df_dataset.isna().sum())
-# print(df_dataset.head(10).to_string())
-# print('='*90)
-# def count_comma_zero_comma(file_path):
-#     with open(file_path, 'r') as f:
-#         content = f.read()
-#     # شمارش تعداد رشته ",0,"
-#     count = content.count(',0,')
-#     return count
-# result = count_comma_zero_comma('default of credit card clients.csv')
-# print(f'the count of ,0, in this data set is {count_comma_zero_comma('default of credit card clients.csv')}')
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -32,51 +12,51 @@ import joblib
 import warnings
 warnings.filterwarnings('ignore')
 
-# بارگذاری داده
+# Load data
 df = pd.read_csv('default of credit card clients.csv')
 
-# بررسی اولیه
+# Initial exploration
 print("Dataset shape:", df.shape)
 print("\nMissing values:\n", df.isnull().sum())
 print("\nData types:\n", df.dtypes)
 
-# بررسی توزیع target variable
+# Examine distribution of target variable
 plt.figure(figsize=(10, 6))
 sns.countplot(x='default payment next month', data=df)
 plt.title('Distribution of Target Variable')
 plt.show()
 
-# بررسی همبستگی
+# Examine correlation
 plt.figure(figsize=(20, 15))
 correlation_matrix = df.corr()
 sns.heatmap(correlation_matrix, annot=False, cmap='coolwarm', center=0)
 plt.title('Correlation Matrix')
 plt.show()
 
-# حذف ستون ID که نیاز نیست
+# Drop ID column as it is not needed
 df = df.drop('ID', axis=1)
 
-# بررسی و اصلاح مقادیر در ستون‌های categorical
+# Check and correct values in categorical columns
 print("Unique values in EDUCATION:", df['EDUCATION'].unique())
 print("Unique values in MARRIAGE:", df['MARRIAGE'].unique())
 
-# اصلاح مقادیر خارج از رنج (طبق دیکشنری)
-df['EDUCATION'] = df['EDUCATION'].replace([0, 5, 6], 4)  # تبدیل همه مقادیر غیرمعتبر به 4 (others)
-df['MARRIAGE'] = df['MARRIAGE'].replace(0, 3)  # تبدیل 0 به 3 (others)
+# Correct out-of-range values (based on data dictionary)
+df['EDUCATION'] = df['EDUCATION'].replace([0, 5, 6], 4)  # Convert all invalid values to 4 (others)
+df['MARRIAGE'] = df['MARRIAGE'].replace(0, 3)  # Convert 0 to 3 (others)
 
 # Separating features and target
 X = df.drop('default payment next month', axis=1)
 y = df['default payment next month']
 
-# استانداردسازی داده‌های عددی
+# Standardize numerical data
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
-# تقسیم داده به train و test
+# Split data into train and test
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2,
                                                     random_state=42, stratify=y)
 
-# تعریف مدل‌های مختلف
+# Define different models
 models = {
     'Logistic Regression': LogisticRegression(max_iter=1000, random_state=42),
     'Random Forest': RandomForestClassifier(random_state=42),
@@ -84,14 +64,14 @@ models = {
     'SVM': SVC(probability=True, random_state=42)
 }
 
-# ارزیابی مدل‌ها با cross-validation
+# Evaluate models with cross-validation
 results = {}
 for name, model in models.items():
     cv_scores = cross_val_score(model, X_train, y_train, cv=5, scoring='roc_auc')
     results[name] = cv_scores
     print(f"{name}: AUC = {cv_scores.mean():.4f} (+/- {cv_scores.std()*2:.4f})")
 
-# مقایسه بصری مدل‌ها
+# Visualize model comparison
 plt.figure(figsize=(12, 8))
 plt.boxplot(results.values(), labels=results.keys())
 plt.title('Comparison of Algorithm Performance')
@@ -99,10 +79,10 @@ plt.ylabel('ROC AUC Score')
 plt.xticks(rotation=45)
 plt.show()
 
-# انتخاب بهترین مدل بر اساس نتایج
+# Select the best model based on results
 best_model = GradientBoostingClassifier(random_state=42)
 
-# تنظیم هایپرپارامترها
+# Hyperparameter tuning
 param_grid = {
     'n_estimators': [100, 200],
     'learning_rate': [0.01, 0.1, 0.2],
@@ -117,21 +97,21 @@ grid_search.fit(X_train, y_train)
 print("Best parameters:", grid_search.best_params_)
 print("Best cross-validation score: {:.4f}".format(grid_search.best_score_))
 
-# آموزش مدل نهایی با بهترین پارامترها
+# Train final model with best parameters
 final_model = grid_search.best_estimator_
 final_model.fit(X_train, y_train)
 
-# پیش‌بینی روی داده تست
+# Predict on test data
 y_pred = final_model.predict(X_test)
 y_pred_proba = final_model.predict_proba(X_test)[:, 1]
 
-# محاسبه معیارهای ارزیابی
+# Calculate evaluation metrics
 print("Accuracy: {:.4f}".format(accuracy_score(y_test, y_pred)))
 print("ROC AUC: {:.4f}".format(roc_auc_score(y_test, y_pred_proba)))
 print("\nClassification Report:")
 print(classification_report(y_test, y_pred))
 
-# confusion matrix
+# Confusion matrix
 plt.figure(figsize=(8, 6))
 cm = confusion_matrix(y_test, y_pred)
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')

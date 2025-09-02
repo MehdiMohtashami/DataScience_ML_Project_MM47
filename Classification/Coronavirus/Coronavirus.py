@@ -87,10 +87,10 @@ df_merged = df_confirmed_long.merge(
     df_deaths_long, on=['Province/State', 'Country/Region', 'Lat', 'Long', 'Date'], how='outer'
 )
 
-# Convert Date in main dataset to datetime
+# Convert Date in the main dataset to datetime
 df_main['ObservationDate'] = pd.to_datetime(df_main['ObservationDate'])
 
-# Merge with main dataset
+# Merge with the main dataset
 df_combined = df_main.merge(
     df_merged,
     left_on=['Province/State', 'Country/Region', 'ObservationDate'],
@@ -264,37 +264,37 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.model_selection import train_test_split
 
-# بارگذاری و پیش‌پردازش داده‌ها (مشابه قبل)
-# ... (کدهای قبلی برای بارگذاری و ترکیب داده‌ها)
+# Load and preprocess data (same as before)
+# ... (previous code for loading and combining data)
 
-# ایجاد ویژگی هدف: آیا موارد در ۷ روز آینده دوبرابر می‌شود؟
+# Create target feature: Will cases double in the next 7 days?
 df_combined = df_combined.sort_values(['Country/Region', 'Province/State', 'ObservationDate'])
 df_combined['Future_Confirmed'] = df_combined.groupby(['Country/Region', 'Province/State'])['Confirmed'].shift(-7)
 df_combined['Cases_Double'] = (df_combined['Future_Confirmed'] >= 2 * df_combined['Confirmed']).astype(int)
 df_combined.dropna(subset=['Future_Confirmed'], inplace=True)
 
-# کدگذاری متغیرهای категоوری
+# Coding category variables
 le_country = LabelEncoder()
 le_province = LabelEncoder()
 df_combined['Country_Encoded'] = le_country.fit_transform(df_combined['Country/Region'])
 df_combined['Province_Encoded'] = le_province.fit_transform(df_combined['Province/State'])
 
-# ویژگی‌ها و هدف
+# Features and purpose
 features = ['Lat', 'Long', 'Confirmed', 'Deaths', 'Recovered',
             'Mortality_Rate', 'Recovery_Rate', 'Active_Cases',
             'Day_of_Week', 'Month', 'Country_Encoded', 'Province_Encoded']
 X = df_combined[features]
 y = df_combined['Cases_Double']
 
-# تقسیم داده‌ها
+# Split the data
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
-# استانداردسازی
+# Standardization
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# آموزش مدل Random Forest با بهترین پارامترها
+# Train Random Forest model with best parameters
 best_rf = RandomForestClassifier(
     n_estimators=200,
     max_depth=10,
@@ -304,26 +304,26 @@ best_rf = RandomForestClassifier(
 )
 best_rf.fit(X_train_scaled, y_train)
 
-# ذخیره مدل، scaler و encoderها
+# Save model, scaler and encoders
 joblib.dump(best_rf, 'random_forest_covid_model.pkl')
 joblib.dump(scaler, 'scaler.pkl')
 joblib.dump(le_country, 'label_encoder_country.pkl')
 joblib.dump(le_province, 'label_encoder_province.pkl')
 
-# همچنین می‌توانید لیست ویژگی‌ها را ذخیره کنید
+# You can also save the list of features
 with open('feature_names.txt', 'w') as f:
     for feature in features:
         f.write(feature + '\n')
 
-print("مدل و پیش‌پردازش‌گرها با موفقیت ذخیره شدند!")
+print("Model and preprocessors saved successfully!")
 
-# بارگذاری مدل و پیش‌پردازش‌گرها
+# Load model and preprocessors
 model = joblib.load('random_forest_covid_model.pkl')
 scaler = joblib.load('scaler.pkl')
 le_country = joblib.load('label_encoder_country.pkl')
 le_province = joblib.load('label_encoder_province.pkl')
 
-# آماده‌سازی داده جدید برای پیش‌بینی
+# Prepare new data for prediction
 new_data = pd.DataFrame({
     'Lat': [31.8257],
     'Long': [117.2264],
@@ -339,12 +339,12 @@ new_data = pd.DataFrame({
     'Province_Encoded': [le_province.transform(['Anhui'])[0]]
 })
 
-# استانداردسازی داده جدید
+# Standardize new data
 new_data_scaled = scaler.transform(new_data)
 
-# پیش‌بینی
+#  Prediction
 prediction = model.predict(new_data_scaled)
 prediction_proba = model.predict_proba(new_data_scaled)
 
-print(f"پیش‌بینی: {prediction[0]}")
-print(f"احتمالات: {prediction_proba[0]}")
+print(f" Prediction: {prediction[0]}")
+print(f"Probabilities: {prediction_proba[0]}")

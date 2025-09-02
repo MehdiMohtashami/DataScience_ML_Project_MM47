@@ -14,7 +14,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDoubleValidator, QFont, QIntValidator
 import warnings
 
-# فیلتر کردن هشدارها
+# Filtering alerts
 warnings.filterwarnings("ignore")
 
 
@@ -26,12 +26,12 @@ class MplCanvas(FigureCanvas):
         self.setWindowTitle("Coronavirus")
 
     def clear_axes(self):
-        """پاک کردن تمام axesهای موجود"""
+        """Clear all existing axes"""
         for ax in self.fig.axes:
             self.fig.delaxes(ax)
 
     def create_axes(self):
-        """ایجاد axes جدید"""
+        """Creating new axes"""
         self.clear_axes()
         return self.fig.add_subplot(111)
 
@@ -134,7 +134,7 @@ class CovidPredictorApp(QMainWindow):
         predict_btn.setStyleSheet("QPushButton { background-color: #4CAF50; color: white; font-weight: bold; }")
 
         back_button = QPushButton("Back to Main", self)
-        back_button.clicked.connect(self.close_and_go_back)  # متد close رو صدا میزنه
+        back_button.clicked.connect(self.close_and_go_back)
         back_button.setStyleSheet("QPushButton { background-color: gray; color: white; font-weight: bold; }")
 
         # Add sections to left layout
@@ -278,7 +278,7 @@ class CovidPredictorApp(QMainWindow):
             self.country_combo.addItems(self.le_country.classes_)
             self.province_combo.addItems(self.le_province.classes_)
 
-            # Populate feature combos for relationships tab
+            # Populate feature combos for relationship tab
             numeric_features = ['Lat', 'Long', 'Confirmed', 'Deaths', 'Recovered',
                                 'Mortality_Rate', 'Recovery_Rate', 'Active_Cases']
             self.x_feature_combo.addItems(numeric_features)
@@ -415,7 +415,7 @@ class CovidPredictorApp(QMainWindow):
         labels = ['Not Doubling', 'Doubling']
         colors = ['#4CAF50', '#F44336']
 
-        # ایجاد axes جدید
+        # Creating new axes
         ax = self.probability_canvas.create_axes()
 
         # Create donut chart
@@ -446,7 +446,7 @@ class CovidPredictorApp(QMainWindow):
         importances = self.model.feature_importances_
         indices = np.argsort(importances)[::-1]
 
-        # ایجاد axes جدید
+        # Creating new axes
         ax = self.importance_canvas.create_axes()
 
         # Create horizontal bar chart
@@ -471,7 +471,7 @@ class CovidPredictorApp(QMainWindow):
 
     def update_relationship_chart(self):
         """Update the feature relationship chart when combo boxes change"""
-        # ایجاد axes جدید
+        # Creating new axes
         ax = self.relationship_canvas.create_axes()
 
         # Check if we have a prediction to display
@@ -537,17 +537,17 @@ class CovidPredictorApp(QMainWindow):
         self.close()
 
 def main(parent=None):
-    app = QApplication(sys.argv)
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
 
-    # Set application style
+    font = QFont("Arial", 8, QFont.Bold)
+    app.setFont(font)
     app.setStyle('Fusion')
     window = CovidPredictorApp()
     window.show()
-    # Create and show the main window
-    window = CovidPredictorApp()
-    window.show()
-
-    sys.exit(app.exec_())
+    if parent is None:
+        sys.exit(app.exec_())
 
 
 if __name__ == '__main__':

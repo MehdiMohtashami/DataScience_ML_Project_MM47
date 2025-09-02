@@ -16,7 +16,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 
-# ---------- تلاش برای بارگذاری فایل‌های آموزش ----------
+# ---------- Attempt to load training files ----------
 try:
     loaded_model = joblib.load('best_xgboost_model.pkl')
     loaded_scaler = joblib.load('scaler.pkl')
@@ -29,7 +29,7 @@ except Exception as e:
     loaded_model = None
     loaded_scaler = None
     encoders = {}
-    # fallback feature order (اگر file نداشتیم)
+    # Fallback feature order (if the file is missing)
     feature_names = [
         'age', 'workclass', 'fnlwgt', 'education', 'education-num',
         'marital-status', 'occupation', 'relationship', 'race', 'sex',
@@ -37,20 +37,20 @@ except Exception as e:
     ]
     model_loaded = False
 
-# لیست ستون‌های دسته‌ای که انتظار انکودر برای آنها وجود دارد
+# List of categorical columns expected to have encoders
 CATEGORICAL_COLS = ['workclass', 'education', 'marital-status', 'occupation',
                     'relationship', 'race', 'sex', 'native-country']
 
-# اگر انکودر برای ستونی وجود نداشت، یک fallback ساده می‌سازیم
+# If an encoder for a column is missing, create a simple fallback
 from sklearn.preprocessing import LabelEncoder
 for col in CATEGORICAL_COLS:
     if col not in encoders:
         le = LabelEncoder()
-        # یک کلاس پیش‌فرض می‌سازیم تا ComboBox کار کند
+        # Create a default class so ComboBox works
         le.classes_ = np.array(['__unknown__'])
         encoders[col] = le
 
-# کلاس برای رسم نمودارها (ساده)
+# Class for plotting charts (simple)
 class MplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=5, height=4, dpi=100):
         self.fig = Figure(figsize=(width, height), dpi=dpi)
@@ -58,14 +58,14 @@ class MplCanvas(FigureCanvas):
         super(MplCanvas, self).__init__(self.fig)
         self.setParent(parent)
 
-# ---------- پنجرهٔ اصلی ----------
+# ---------- Main window ----------
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Income Prediction Dashboard (Final)")
         self.setGeometry(80, 80, 1400, 900)
 
-        # استایل ساده
+        # Simple style
         self.setStyleSheet("""
             QMainWindow { background-color: #f7f9fb; }
             QGroupBox { font-weight: bold; border: 2px solid #d6dde6; border-radius: 8px; margin-top: 1ex; padding-top: 10px; }
@@ -81,7 +81,7 @@ class MainWindow(QMainWindow):
 
         splitter = QSplitter(Qt.Horizontal)
 
-        # ---------- پنل ورودی ----------
+        # ---------- Input panel ----------
         input_panel = QWidget()
         input_layout = QVBoxLayout(input_panel)
 
@@ -99,7 +99,7 @@ class MainWindow(QMainWindow):
         input_group = QGroupBox("Input Features")
         input_form = QFormLayout(input_group)
 
-        # فیلدهای ورودی با Validatorهای مناسب
+        # Input fields with appropriate validators
         self.age_edit = QLineEdit(); self.age_edit.setValidator(QtGui.QIntValidator(17, 90))
         self.workclass_combo = QComboBox(); self.workclass_combo.addItems(self.get_encoder_classes('workclass'))
         self.fnlwgt_edit = QLineEdit(); self.fnlwgt_edit.setValidator(QtGui.QIntValidator(10000, 1500000))
@@ -152,10 +152,9 @@ class MainWindow(QMainWindow):
         input_layout.addWidget(self.result_label)
         input_layout.addStretch()
 
-        # ---------- پنل خروجی ----------
+        # ---------- Output panel ----------
         output_panel = QWidget()
-        output_layout = QVBoxLayout(output_panel)
-
+        output_layout = QVBoxLayout (output_panel)
         self.tab_widget = QTabWidget()
         analysis_tab = QWidget()
         analysis_layout = QVBoxLayout(analysis_tab)
@@ -169,7 +168,7 @@ class MainWindow(QMainWindow):
         comparison_tab = QWidget()
         comparison_layout = QVBoxLayout(comparison_tab)
         self.model_comparison_canvas = MplCanvas(self, width=6, height=4, dpi=100)
-        self.model_metrics_canvas = MplCanvas(self, width=6, height=4, dpi=100)  # نمودار جدید
+        self.model_metrics_canvas = MplCanvas(self, width=6, height=4, dpi=100)  # New chart
         comparison_layout.addWidget(QLabel("Model Comparison (Accuracy)"))
         comparison_layout.addWidget(self.model_comparison_canvas)
         comparison_layout.addWidget(QLabel("Model Metrics (Accuracy vs F1-Score)"))
@@ -186,10 +185,10 @@ class MainWindow(QMainWindow):
         splitter.setSizes([420, 980])
         main_layout.addWidget(splitter)
 
-        # دادهٔ نمونه
+        # Sample data
         self.load_sample_data()
 
-    # ---------- helper: گرفتن کلاس‌های انکودر برای پر کردن ComboBox ----------
+    # ---------- Helper: Get encoder classes for populating ComboBox ----------
     def get_encoder_classes(self, col):
         if col in encoders:
             try:
@@ -201,7 +200,7 @@ class MainWindow(QMainWindow):
             return ['__unknown__']
 
     def load_sample_data(self):
-        # مقداردهی اولیه برای تست UI
+        # Initial values for UI testing
         self.age_edit.setText("45")
         self.workclass_combo.setCurrentIndex(0)
         self.fnlwgt_edit.setText("200000")
@@ -217,33 +216,33 @@ class MainWindow(QMainWindow):
         self.hours_edit.setText("50")
         self.country_combo.setCurrentIndex(0)
 
-    # ---------- تبدیل مقدار دسته‌ای با استفاده از encoders بارگذاری‌شده ----------
+    # ---------- Convert categorical value using loaded encoders ----------
     def encode_with_encoders(self, feat, val):
-        """اگر مقدار در کلاس‌های انکودر وجود داشته باشد آن را برمی‌گرداند،
-           در غیر اینصورت fallback مقدار 0 را برمی‌گرداند و هشدار چاپ می‌شود."""
+        """Returns the encoded value if it exists in the encoder's classes,
+           otherwise returns fallback value 0 and prints a warning."""
         try:
             le = encoders.get(feat, None)
             if le is None:
                 return 0.0
-            # transform ممکن است error بدهد اگر val در classes_ نباشد
+            # Transform may raise an error if val is not in classes_
             try:
                 return float(le.transform([str(val)])[0])
             except Exception:
-                # مقدار دیده نشده -> fallback به index 0
+                # Unseen value -> fallback to index 0
                 print(f"Warning: unseen category '{val}' for feature '{feat}'. Using fallback 0.")
                 return float(0)
         except Exception as e:
             print("Error encoding:", feat, val, e)
             return 0.0
 
-    # ---------- تابع پیش‌بینی ----------
+    # ---------- Prediction function ----------
     def predict_income(self):
         if not model_loaded:
             QMessageBox.warning(self, "Model not loaded", "Model files are not available. Run training first.")
             return
 
         try:
-            # جمع‌آوری ورودی‌ها (رشته‌ای)
+            # Collect inputs (as strings)
             raw = {
                 'age': self.age_edit.text().strip(),
                 'workclass': self.workclass_combo.currentText(),
@@ -261,7 +260,7 @@ class MainWindow(QMainWindow):
                 'native-country': self.country_combo.currentText()
             }
 
-            # تبدیل به لیست عددی مطابق feature_names
+            # Convert to the numeric list according to feature_names
             numeric_list = []
             numeric_input_data = {}
             for feat in feature_names:
@@ -272,7 +271,7 @@ class MainWindow(QMainWindow):
                     try:
                         val = float(s)
                     except:
-                        # اگر تبدیل عددی نشد، اخطار بده و از 0 استفاده کن
+                        # If numeric conversion fails, warn and use 0
                         print(f"Warning: couldn't parse numeric input for {feat} -> '{s}'. Using 0.")
                         val = 0.0
                     numeric_list.append(val)
@@ -285,10 +284,10 @@ class MainWindow(QMainWindow):
 
             input_array = np.array(numeric_list, dtype=float).reshape(1, -1)
 
-            # استانداردسازی
+            # Standardization
             input_scaled = loaded_scaler.transform(input_array)
 
-            # پیش‌بینی
+            # Prediction
             pred = loaded_model.predict(input_scaled)[0]
             proba = loaded_model.predict_proba(input_scaled)[0]
 
@@ -301,7 +300,7 @@ class MainWindow(QMainWindow):
                 self.result_label.setText(f"Prediction: Income <= $50K\nConfidence: {conf:.2f}%")
                 self.result_label.setStyleSheet("color: white; background-color: #e74c3c; padding: 14px; border-radius: 6px;")
 
-            # فعال کردن تب‌ها و به‌روزرسانی نمودارها
+            # Enable tabs and update charts
             self.tab_widget.setEnabled(True)
             self.update_charts(numeric_input_data, int(pred), proba)
 
@@ -309,29 +308,29 @@ class MainWindow(QMainWindow):
             traceback.print_exc()
             QMessageBox.critical(self, "Prediction Error", f"An error occurred:\n{str(e)}")
 
-    # ---------- تابع بروزرسانی نمودارها ----------
+    # ---------- Update charts function ----------
     def update_charts(self, input_data, prediction, probability):
         try:
             self.feature_importance_canvas.axes.clear()
             self.feature_relationship_canvas.axes.clear()
             self.model_comparison_canvas.axes.clear()
-            self.model_metrics_canvas.axes.clear()  # پاک کردن نمودار جدید
+            self.model_metrics_canvas.axes.clear()  # Clear new chart
 
-            # اهمیت ویژگی‌ها
-            feature_importance = getattr(loaded_model, "feature_importances_", None)
+            # Feature importance
+            feature_importance = getattr(loaded_model, "feature_importance_", None)
             if feature_importance is None:
-                # اگر مدل این attribute را نداشت، از صفر استفاده کن
+                # If the model lacks this attribute, use zeros
                 feature_importance = np.zeros(len(feature_names))
             importance_df = pd.DataFrame({'feature': feature_names, 'importance': feature_importance})
             importance_df = importance_df.sort_values('importance', ascending=False)
 
             top10 = importance_df.head(10)
             self.feature_importance_canvas.axes.barh(top10['feature'][::-1], top10['importance'][::-1])
-            self.feature_importance_canvas.axes.set_title("Top 10 Feature Importances")
+            self.feature_importance_canvas.axes.set_title("Top 10 Feature Importance")
             self.feature_importance_canvas.fig.tight_layout()
             self.feature_importance_canvas.draw()
 
-            # روابط دو ویژگی برتر (نمونه‌ای)
+            # Relationship of top two features (example)
             top_feats = importance_df['feature'].head(2).tolist()
             if len(top_feats) >= 2:
                 np.random.seed(0)
@@ -351,7 +350,7 @@ class MainWindow(QMainWindow):
                 self.feature_relationship_canvas.fig.tight_layout()
                 self.feature_relationship_canvas.draw()
 
-            # نمودار مقایسه مدل‌ها (Accuracy)
+            # Model comparison chart (Accuracy)
             models = ['LogReg', 'DecisionTree', 'RandomForest', 'GB', 'XGBoost', 'SVM', 'KNN']
             accuracies = [0.8254, 0.8065, 0.8555, 0.8668, 0.8687, 0.8512, 0.8286]
             colors = ['lightblue' if m != 'XGBoost' else 'gold' for m in models]
@@ -363,8 +362,8 @@ class MainWindow(QMainWindow):
             self.model_comparison_canvas.fig.tight_layout()
             self.model_comparison_canvas.draw()
 
-            # نمودار جدید: مقایسه Accuracy و F1-Score
-            f1_scores = [0.8150, 0.7950, 0.8450, 0.8600, 0.8650, 0.8400, 0.8200]  # داده‌های نمونه برای F1-Score
+            # New chart: Accuracy vs. F1-Score comparison
+            f1_scores = [0.8150, 0.7950, 0.8450, 0.8600, 0.8650, 0.8400, 0.8200]  # Sample F1-Score data
             self.model_metrics_canvas.axes.plot(models, accuracies, marker='o', label='Accuracy', color='#2b91d9')
             self.model_metrics_canvas.axes.plot(models, f1_scores, marker='s', label='F1-Score', color='#e74c3c')
             self.model_metrics_canvas.axes.set_ylim(0.7, 0.9)
@@ -381,10 +380,19 @@ class MainWindow(QMainWindow):
     def close_and_go_back(self):
         self.close()
 
-# ---------- اجرا ----------
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
+def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
+
+    font = QFont("Arial", 8, QFont.Bold)
+    app.setFont(font)
     app.setStyle('Fusion')
-    w = MainWindow()
-    w.show()
-    sys.exit(app.exec_())
+    window = MainWindow(parent)
+    window.show()
+    if parent is None:
+        sys.exit(app.exec_())
+
+# ---------- Execution ----------
+if __name__ == "__main__":
+    main()

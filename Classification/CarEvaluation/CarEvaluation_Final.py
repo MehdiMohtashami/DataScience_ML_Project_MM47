@@ -35,14 +35,14 @@ class CarEvaluationApp(QMainWindow):
         super().__init__(parent)
         self.model_artifacts = None
         self.current_prediction = None
-        self.feature_mappings = {}  # برای ذخیره mapping ویژگی‌ها
+        self.feature_mappings = {}  # To save feature mappings
         self.initUI()
         self.load_model()
         self.setWindowTitle("CarEvaluation")
 
 
     def go_back(self):
-        """بستن این UI و نمایش دوباره MainForm"""
+        """Close this UI and redisplay the MainForm"""
         self.close()
         if self.parent:
             self.parent.show()
@@ -58,9 +58,9 @@ class CarEvaluationApp(QMainWindow):
 
         v = QVBoxLayout(self)
         v.addWidget(QLabel("CarEvaluation - Prediction UI"))
-        v.addWidget(QTextEdit("اینجا فرم مدل CarEvaluation خواهد بود..."))
-        back = QPushButton("⬅ بازگشت به MainForm")
-        back.clicked.connect(self.go_back)  # وصلش کردیم به تابع go_back
+        v.addWidget(QTextEdit("Here will be the CarEvaluation model form..."))
+        back = QPushButton("⬅ Return to MainForm")
+        back.clicked.connect(self.go_back)  # We connected it to the go_back function.
         v.addWidget(back)
 
         # Create tabs
@@ -88,7 +88,7 @@ class CarEvaluationApp(QMainWindow):
         # Input section
         input_group = QGroupBox("Car Features Input")
         input_layout = QGridLayout()
-        input_layout.setHorizontalSpacing(10)  # کاهش فاصله افقی
+        input_layout.setHorizontalSpacing(10)
 
         # Feature options
         self.feature_options = {
@@ -113,27 +113,27 @@ class CarEvaluationApp(QMainWindow):
         self.comboboxes = {}
         row = 0
         for feature, options in self.feature_options.items():
-            # ایجاد Label اول
+            # Create the first label
             label = QLabel(f"{feature.capitalize()}:")
             label.setToolTip(help_texts[feature])
-            label.setMinimumWidth(70)  # عرض ثابت برای labelها
+            label.setMinimumWidth(70)  # Fixed width for labels
 
-            # ایجاد ComboBox بعد از Label
+            # Creating a ComboBox after a Label
             combo = QComboBox()
             combo.addItems(options)
             combo.setCurrentIndex(2 if feature in ['buying', 'maint'] else 1)  # Set reasonable defaults
             combo.setToolTip(help_texts[feature])
-            combo.setMinimumWidth(100)  # عرض ثابت برای comboboxها
+            combo.setMinimumWidth(100)  # Fixed width for comboboxes
             self.comboboxes[feature] = combo
 
-            # اضافه کردن به Layout (ابتدا Label سپس ComboBox)
+            # Add to Layout (first Label then ComboBox)
             input_layout.addWidget(label, row, 0)
             input_layout.addWidget(combo, row, 1)
             row += 1
 
-        # تنظیم ستون‌ها برای چیدمان بهتر
-        input_layout.setColumnStretch(0, 1)  # ستون labelها
-        input_layout.setColumnStretch(1, 2)  # ستون comboboxها
+        # Adjust columns for better layout
+        input_layout.setColumnStretch(0, 1)
+        input_layout.setColumnStretch(1, 2)
 
         input_group.setLayout(input_layout)
         prediction_layout.addWidget(input_group)
@@ -158,7 +158,7 @@ class CarEvaluationApp(QMainWindow):
 
         #back_button
         self.back_button = QPushButton("Back to Main", self)
-        self.back_button.clicked.connect(self.close_and_go_back)  # متد close رو صدا میزنه
+        self.back_button.clicked.connect(self.close_and_go_back)
         self.back_button.setStyleSheet("""
                     QPushButton { 
                         background-color: gray; 
@@ -213,18 +213,18 @@ class CarEvaluationApp(QMainWindow):
             current_dir = os.path.dirname(os.path.abspath(__file__))
             model_path = os.path.join(current_dir, 'car_acceptability_tuned_rf_model.pkl')
 
-            # بررسی وجود فایل مدل
+            # Checking for the existence of the model file
             if os.path.exists(model_path):
                 self.model_artifacts = joblib.load(model_path)
                 print("Model loaded successfully")
             else:
-                # نمایش پیام خطا و ایجاد یک مدل ساده برای تست
+                # Display error messages and create a simple model for testing
                 error_msg = f"Model file not found: {model_path}\n\nCreating a simple model for demonstration."
                 print(error_msg)
                 QMessageBox.warning(self, "Warning", error_msg)
                 self.create_simple_model()
 
-            # ایجاد mapping دستی برای ویژگی‌ها
+            # Create manual mapping for features
             self.feature_mappings = {}
             for feature, options in self.feature_options.items():
                 self.feature_mappings[feature] = {option: idx for idx, option in enumerate(options)}
@@ -237,7 +237,7 @@ class CarEvaluationApp(QMainWindow):
             QMessageBox.critical(self, "Error", error_msg)
 
     def manual_encode_features(self, input_data):
-        """تبدیل دستی مقادیر ویژگی‌ها به اعداد بر اساس mapping از پیش تعریف شده"""
+        """Manually convert feature values to numbers based on predefined mappings"""
         encoded_data = []
         for feature in self.model_artifacts['feature_names']:
             value = input_data[feature]
@@ -321,9 +321,9 @@ class CarEvaluationApp(QMainWindow):
             importance_group = QGroupBox("Feature Importance Analysis")
             importance_layout = QVBoxLayout()
 
-            # Get feature importances
+            # Get feature importance's
             model = self.model_artifacts['model']
-            feature_importances = model.feature_importances_
+            feature_importance = model.feature_importances_
             feature_names = self.model_artifacts['feature_names']
 
             # Create horizontal bar chart for feature importance
@@ -331,10 +331,10 @@ class CarEvaluationApp(QMainWindow):
             importance_ax = importance_fig.add_subplot(111)
 
             # Sort features by importance
-            sorted_idx = np.argsort(feature_importances)
+            sorted_idx = np.argsort(feature_importance)
             pos = np.arange(sorted_idx.shape[0])
 
-            bars = importance_ax.barh(pos, feature_importances[sorted_idx])
+            bars = importance_ax.barh(pos, feature_importance[sorted_idx])
             importance_ax.set_yticks(pos)
             importance_ax.set_yticklabels([feature_names[i] for i in sorted_idx])
             importance_ax.set_xlabel('Importance')
@@ -458,36 +458,17 @@ class CarEvaluationApp(QMainWindow):
 
 
 def main(parent=None):
-    try:
+    app = QApplication.instance()
+    if app is None:
         app = QApplication(sys.argv)
 
-        # Set application style
-        app.setStyle('Fusion')
-
-        window = CarEvaluationApp(parent)
-        window.show()
-        #
+    font = QFont("Arial", 9, QFont.Bold)
+    app.setFont(font)
+    app.setStyle('Fusion')
+    window = CarEvaluationApp(parent)
+    window.show()
+    if parent is None:
         sys.exit(app.exec_())
-        win = CarEvaluationApp()
-        win.show()
-        return win
-    except Exception as e:
-        print(f"Application error: {str(e)}")
-        print(traceback.format_exc())
-        QMessageBox.critical(None, "Fatal Error", f"The application encountered a fatal error: {str(e)}")
-
-
-# if __name__ == '__main__':
-#     app = QApplication(sys.argv)
-#     window = CarEvaluationApp()
-#     window.show()
-#     sys.exit(app.exec_())
 
 if __name__ == "__main__":
-    import sys
-    from PyQt5.QtWidgets import QApplication
-    app = QApplication(sys.argv)
-    app.setStyle('Fusion')
-    window = CarEvaluationApp()
-    window.show()
-    sys.exit(app.exec_())
+    main()

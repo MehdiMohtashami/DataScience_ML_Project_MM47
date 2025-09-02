@@ -423,19 +423,17 @@ class BanknoteClassifierUI(QMainWindow):
     def close_and_go_back(self):
         self.close()
 def main(parent=None):
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
+
+    font = QFont("Arial", 8, QFont.Bold)
+    app.setFont(font)
+    app.setStyle('Fusion')
     window = BanknoteClassifierUI(parent)
     window.show()
-
-
+    if parent is None:
+        sys.exit(app.exec_())
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-
-    # Set application style
-    app.setStyle('Fusion')
-
-    # Create and show the main window
-    window = BanknoteClassifierUI()
-    window.show()
-
-    sys.exit(app.exec_())
+    main()

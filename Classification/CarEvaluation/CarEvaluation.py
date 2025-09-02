@@ -216,21 +216,21 @@ plt.savefig('ConfusionMatrix-TunedRandomForest.png')
 plt.show()
 
 # 13. Save the Final Model and Encoders for Future Use
-# import joblib
-#
-# # Create a dictionary of artifacts to save
-# model_artifacts = {
-#     'model': best_rf_model,
-#     'target_encoder': le_target,
-#     'feature_encoder': le_features,
-#     'feature_names': list(X.columns),
-#     'target_names': list(le_target.classes_)
-# }
-#
-# # Save the artifacts to a file
-# joblib.dump(model_artifacts, 'car_acceptability_classifier.pkl')
-#
-# print("Model and encoders saved successfully as 'car_acceptability_classifier.pkl'")
+import joblib
+
+# Create a dictionary of artifacts to save
+model_artifacts = {
+    'model': best_rf_model,
+    'target_encoder': le_target,
+    'feature_encoder': le_features,
+    'feature_names': list(X.columns),
+    'target_names': list(le_target.classes_)
+}
+
+# Save the artifacts to a file
+joblib.dump(model_artifacts, 'car_acceptability_classifier.pkl')
+
+print("Model and encoders saved successfully as 'car_acceptability_classifier.pkl'")
 
 # 14. Final Model Saving with Joblib
 

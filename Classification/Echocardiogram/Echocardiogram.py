@@ -145,17 +145,17 @@ y_pred_best = best_model.predict(X_test_scaled)
 print("\n\nDetailed Performance of Best Model (SVM) on Test Set:")
 print(classification_report(y_test, y_pred_best, target_names=['Did Not Survive (0)', 'Survived (1)']))
 
-# پس از آموزش مدل نهایی، آن را با joblib ذخیره کنید
+# After training the final model, save it with joblib
 import joblib
 
-# آموزش مدل نهایی روی تمام داده‌های آموزشی
+# Train the final model on all training data.
 best_model = SVC(random_state=42, class_weight='balanced', kernel='rbf')
 best_model.fit(X_train_scaled, y_train)
 
-# ذخیره مدل آموزش دیده
+# Save the trained model
 joblib.dump(best_model, 'svm_heart_attack_model.pkl')
 
-# ذخیره scaler برای استفاده بعدی در پیش‌پردازش داده‌های جدید
+# Save the scaler for later use in preprocessing new data.
 joblib.dump(scaler, 'scaler.pkl')
 
-print("مدل و Scaler با موفقیت ذخیره شدند!")
+print("Model and Scaler saved successfully!")

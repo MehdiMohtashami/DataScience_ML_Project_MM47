@@ -42,10 +42,10 @@ class AutismScreeningAdult_Final(QMainWindow):
 
     def load_model_and_data(self):
         try:
-            # دریافت مسیر دایرکتوری فعلی
+            # Get the path to the current directory.
             current_dir = os.path.dirname(os.path.abspath(__file__))
 
-            # استفاده از مسیرهای مطلق برای بارگیری فایل‌ها
+            # Using absolute paths to download files
             self.model = joblib.load(os.path.join(current_dir, 'best_model_real.joblib'))
             self.scaler = joblib.load(os.path.join(current_dir, 'scaler_real.joblib'))
             self.feature_names = joblib.load(os.path.join(current_dir, 'feature_names_real.joblib'))
@@ -54,7 +54,7 @@ class AutismScreeningAdult_Final(QMainWindow):
             self.df = pd.read_csv(os.path.join(current_dir, 'Autism-Adult-Data.csv'))
             self.preprocess_data()
 
-            self.model_accuracy = 0.9858# From our previous evaluation
+            self.model_accuracy = 0.9858  # From our previous evaluation
 
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to load model: {str(e)}")
@@ -75,7 +75,6 @@ class AutismScreeningAdult_Final(QMainWindow):
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         main_layout = QHBoxLayout(central_widget)
-
         # Left panel for input
         left_panel = QWidget()
         left_panel.setFixedWidth(400)
@@ -97,9 +96,8 @@ class AutismScreeningAdult_Final(QMainWindow):
         # Age input
         self.age_input = QLineEdit()
         self.age_input.setValidator(QIntValidator(1, 120))
-        self.age_input.setPlaceholderText("Enter age (17-100)")
+        self.age_input.setPlaceholderText("17-100")
         form_layout.addRow("Age:", self.age_input)
-
         # Gender input
         self.gender_input = QComboBox()
         self.gender_input.addItems(["Male", "Female"])
@@ -139,20 +137,20 @@ class AutismScreeningAdult_Final(QMainWindow):
         self.predict_btn = QPushButton("Predict")
         self.predict_btn.clicked.connect(self.predict)
         self.predict_btn.setStyleSheet(
-            "QPushButton { background-color: #4CAF50; color: white; font-size: 16px; padding: 10px; }")
+            "QPushButton { background-color: #4CAF50; color: white; font-size: 16px; font-weight: bold; padding: 10px; }")
         left_layout.addWidget(self.predict_btn)
 
         # Prediction result
         self.result_label = QLabel("Please fill the form and click 'Predict'")
         self.result_label.setAlignment(Qt.AlignCenter)
-        self.result_label.setStyleSheet("QLabel { background-color: #f0f0f0; padding: 10px; font-size: 14px; }")
+        self.result_label.setStyleSheet("QLabel { background-color: #f0f0f0; padding: 10px; font-size: 16px; font-weight: bold; }")
         left_layout.addWidget(self.result_label)
 
         # Back button
         self.back_btn = QPushButton("Back to Main")
         self.back_btn.clicked.connect(self.go_back)
         self.back_btn.setStyleSheet(
-            "QPushButton { background-color: #f44336; color: white; font-size: 16px; padding: 10px; }")
+            "QPushButton { background-color: #f44336; color: white; font-size: 16px; font-weight: bold; padding: 10px; }")
         left_layout.addWidget(self.back_btn)
 
         # Add left panel to main layout
@@ -432,7 +430,7 @@ class AutismScreeningAdult_Final(QMainWindow):
                                             f'{probability[i]:.3f}', ha='center', va='bottom')
 
     def go_back(self):
-        self.close()  # فقط این پنجره را می‌بندد
+        self.close()
 
 
 def main(parent=None):
@@ -440,11 +438,11 @@ def main(parent=None):
     if app is None:
         app = QApplication(sys.argv)
 
+    font = QFont("Arial", 8, QFont.Bold)
+    app.setFont(font)
     app.setStyle('Fusion')
-
     window = AutismScreeningAdult_Final(parent)
     window.show()
-
     if parent is None:
         sys.exit(app.exec_())
 
