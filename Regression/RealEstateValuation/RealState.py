@@ -1,4 +1,4 @@
-import pandas as pd
+# import pandas as pd
 import seaborn as sns
 import missingno as ms
 import matplotlib.pyplot as plt
@@ -12,7 +12,7 @@ import joblib
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
-df = pd.read_csv('../../files/RealStateHouse/Real estate valuation data set.csv')
+# df = pd.read_csv('../../files/RealStateHouse/Real estate valuation data set.csv')
 
 # print(df.head())
 # print(df.columns)

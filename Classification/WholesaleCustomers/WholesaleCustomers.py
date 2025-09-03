@@ -141,66 +141,66 @@
 # df_dataset['Cluster'] = kmeans.labels_ # For exampleK-Means
 # # sns.pairplot(df_dataset, hue='Cluster')
 # # plt.show()
-import pandas as pd
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LogisticRegression
-from sklearn.cluster import KMeans
-from sklearn.metrics import accuracy_score, silhouette_score
-import joblib
-
-# Load data
-df = pd.read_csv('Wholesale customers data.csv')
-
-# Section 1: Logistic Regression with Hyperparameter Tuning (GridSearchCV)
-X_class = df.drop(['Channel', 'Region'], axis=1)
-y_class = df['Channel']
-X_train, X_test, y_train, y_test = train_test_split(X_class, y_class, test_size=0.2, random_state=42)
-
-scaler_class = StandardScaler()
-X_train_scaled = scaler_class.fit_transform(X_train)
-X_test_scaled = scaler_class.transform(X_test)
-
-# Define grid for tuning
-param_grid = {
-    'C': [0.1, 1, 10, 100],  # Values for regularization strength
-    'penalty': ['l1', 'l2'],  # Type of penalty
-    'solver': ['liblinear']   # Solver suitable for l1 and l2
-}
-
-# GridSearchCV to find the best parameters
-grid_search = GridSearchCV(LogisticRegression(), param_grid, cv=5, scoring='accuracy')
-grid_search.fit(X_train_scaled, y_train)
-
-# Best model
-best_lr = grid_search.best_estimator_
-
-# Prediction and evaluation
-y_pred = best_lr.predict(X_test_scaled)
-acc = accuracy_score(y_test, y_pred)
-error_rate = 1 - acc  # Error rate
-
-print(f'Best Parameters for Logistic Regression: {grid_search.best_params_}')
-print(f'Best Cross-Validation Accuracy: {grid_search.best_score_:.2f}')
-print(f'Test Accuracy: {acc:.2f}')
-print(f'Test Error Rate: {error_rate:.2f}')
-
-# Save model and scaler with joblib
-joblib.dump(best_lr, 'logistic_regression_model.joblib')
-joblib.dump(scaler_class, 'scaler_class.joblib')
-print('Logistic Regression model and scaler saved as joblib files.')
-
-# Section 2: K-Means (without extensive tuning, as n_clusters is predetermined)
-X_cluster = df.drop(['Channel', 'Region'], axis=1)
-scaler_cluster = StandardScaler()
-X_scaled = scaler_cluster.fit_transform(X_cluster)
-
-kmeans = KMeans(n_clusters=6, random_state=42, n_init=10)
-kmeans.fit(X_scaled)
-
-# Evaluation
-sil = silhouette_score(X_scaled, kmeans.labels_)
-print(f'K-Means Silhouette Score: {sil:.2f}')
+# import pandas as pd
+# from sklearn.model_selection import train_test_split, GridSearchCV
+# from sklearn.preprocessing import StandardScaler
+# from sklearn.linear_model import LogisticRegression
+# from sklearn.cluster import KMeans
+# from sklearn.metrics import accuracy_score, silhouette_score
+# import joblib
+#
+# # Load data
+# df = pd.read_csv('Wholesale customers data.csv')
+#
+# # Section 1: Logistic Regression with Hyperparameter Tuning (GridSearchCV)
+# X_class = df.drop(['Channel', 'Region'], axis=1)
+# y_class = df['Channel']
+# X_train, X_test, y_train, y_test = train_test_split(X_class, y_class, test_size=0.2, random_state=42)
+#
+# scaler_class = StandardScaler()
+# X_train_scaled = scaler_class.fit_transform(X_train)
+# X_test_scaled = scaler_class.transform(X_test)
+#
+# # Define grid for tuning
+# param_grid = {
+#     'C': [0.1, 1, 10, 100],  # Values for regularization strength
+#     'penalty': ['l1', 'l2'],  # Type of penalty
+#     'solver': ['liblinear']   # Solver suitable for l1 and l2
+# }
+#
+# # GridSearchCV to find the best parameters
+# grid_search = GridSearchCV(LogisticRegression(), param_grid, cv=5, scoring='accuracy')
+# grid_search.fit(X_train_scaled, y_train)
+#
+# # Best model
+# best_lr = grid_search.best_estimator_
+#
+# # Prediction and evaluation
+# y_pred = best_lr.predict(X_test_scaled)
+# acc = accuracy_score(y_test, y_pred)
+# error_rate = 1 - acc  # Error rate
+#
+# print(f'Best Parameters for Logistic Regression: {grid_search.best_params_}')
+# print(f'Best Cross-Validation Accuracy: {grid_search.best_score_:.2f}')
+# print(f'Test Accuracy: {acc:.2f}')
+# print(f'Test Error Rate: {error_rate:.2f}')
+#
+# # Save model and scaler with joblib
+# joblib.dump(best_lr, 'logistic_regression_model.joblib')
+# joblib.dump(scaler_class, 'scaler_class.joblib')
+# print('Logistic Regression model and scaler saved as joblib files.')
+#
+# # Section 2: K-Means (without extensive tuning, as n_clusters is predetermined)
+# X_cluster = df.drop(['Channel', 'Region'], axis=1)
+# scaler_cluster = StandardScaler()
+# X_scaled = scaler_cluster.fit_transform(X_cluster)
+#
+# kmeans = KMeans(n_clusters=6, random_state=42, n_init=10)
+# kmeans.fit(X_scaled)
+#
+# # Evaluation
+# sil = silhouette_score(X_scaled, kmeans.labels_)
+# print(f'K-Means Silhouette Score: {sil:.2f}')
 
 # Save model and scaler with joblib
 # joblib.dump(kmeans, 'kmeans_model.joblib')

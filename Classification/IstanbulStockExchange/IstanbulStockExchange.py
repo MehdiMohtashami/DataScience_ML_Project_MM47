@@ -152,242 +152,242 @@
 # plt.title('Actual vs Predicted Values')
 # plt.tight_layout()
 # plt.show()
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
-from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVC
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-from sklearn.inspection import permutation_importance
-import joblib
-import time
-import os
-
-print("Removing previous joblib files...")
-joblib_files = ['optimized_final_model.pkl', 'final_scaler.pkl', 'feature_names.pkl',
-                'ensemble_model.pkl', 'ensemble_scaler.pkl', 'ensemble_features.pkl']
-for file in joblib_files:
-    if os.path.exists(file):
-        os.remove(file)
-        print(f"Removed {file}")
-
-df = pd.read_csv('data_akbilgic.csv')
-
-df['date'] = pd.to_datetime(df['date'], format='%d-%b-%y')
-
-print("Creating optimized features based on importance analysis...")
-
-#1. Use important features and eliminate unimportant ones
-X_optimized = df[['EM', 'EU']].copy()
-
-#2. Create an interactive feature
-X_optimized['EM_EU_interaction'] = X_optimized['EM'] * X_optimized['EU']
-
-#3. Create lag features only for important features
-X_optimized['EM_lag1'] = X_optimized['EM'].shift(1)
-X_optimized['EM_lag2'] = X_optimized['EM'].shift(2)
-X_optimized['EU_lag2'] = X_optimized['EU'].shift(2)  # فقط lag2 برای EU
-
-#4. Create moving averages
-X_optimized['EM_MA5'] = X_optimized['EM'].rolling(window=5).mean()
-X_optimized['EU_MA5'] = X_optimized['EU'].rolling(window=5).mean()
-
-#5. Creating new trending features
-X_optimized['EM_trend'] = X_optimized['EM'] - X_optimized['EM_lag1']
-X_optimized['EU_trend'] = X_optimized['EU'] - X_optimized['EU_lag2']
-
-# Remove NaN values ​​caused by lag and moving average
-X_optimized = X_optimized.dropna()
-
-# Adapting the goal to new features
-y_optimized = (df['ISE.1'] > 0).astype(int)
-y_optimized = y_optimized.iloc[len(y_optimized) - len(X_optimized):]
-
-# Reset indexes
-X_optimized = X_optimized.reset_index(drop=True)
-y_optimized = y_optimized.reset_index(drop=True)
-
-print(f"Optimized dataset shape: {X_optimized.shape}")
-print(f"Features: {list(X_optimized.columns)}")
-
-# Data division
-X_train, X_test, y_train, y_test = train_test_split(
-    X_optimized, y_optimized, test_size=0.2, random_state=42, stratify=y_optimized
-)
-
-# Standardization
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.transform(X_test)
-
-# Create Ensemble model
-print("\n" + "=" * 60)
-print("CREATING ENSEMBLE MODEL")
-print("=" * 60)
-
-# Definition of basic models
-base_models = {
-    'Logistic Regression': LogisticRegression(C=100, solver='liblinear', random_state=42),
-    'SVC': SVC(C=10, kernel='linear', probability=True, random_state=42),
-    'Gradient Boosting': GradientBoostingClassifier(n_estimators=100, random_state=42)
-}
-
-# Create Ensemble Model
-ensemble_model = VotingClassifier(
-    estimators=[(name, model) for name, model in base_models.items()],
-    voting='soft',
-    n_jobs=-1
-)
-
-# Training and evaluating the Ensemble model
-print("Training and evaluating ensemble model...")
-
-# Cross-Validation
-cv_scores = cross_val_score(ensemble_model, X_train_scaled, y_train, cv=5, scoring='accuracy')
-print(f"Ensemble CV Accuracy: {cv_scores.mean():.4f} (±{cv_scores.std() * 2:.4f})")
-
-# Final training
-ensemble_model.fit(X_train_scaled, y_train)
-
-# Forecast
-y_pred_ensemble = ensemble_model.predict(X_test_scaled)
-ensemble_accuracy = accuracy_score(y_test, y_pred_ensemble)
-
-print(f"Ensemble Test Accuracy: {ensemble_accuracy:.4f}")
-print("\nEnsemble Classification Report:")
-print(classification_report(y_test, y_pred_ensemble))
-
-print("\n" + "=" * 60)
-print("COMPARISON WITH BASE MODELS")
-print("=" * 60)
-
-base_results = {}
-for name, model in base_models.items():
-    model.fit(X_train_scaled, y_train)
-    y_pred = model.predict(X_test_scaled)
-    accuracy = accuracy_score(y_test, y_pred)
-    base_results[name] = accuracy
-    print(f"{name:25s}: {accuracy:.4f}")
-
-print(f"{'Ensemble':25s}: {ensemble_accuracy:.4f}")
-
-print("\n" + "=" * 60)
-print("FEATURE IMPORTANCE ANALYSIS")
-print("=" * 60)
-
-perm_importance = permutation_importance(ensemble_model, X_test_scaled, y_test,
-                                        n_repeats=10, random_state=42, n_jobs=-1)
-
-feature_importance_df = pd.DataFrame({
-    'feature': X_optimized.columns,
-    'importance_mean': perm_importance.importances_mean,
-    'importance_std': perm_importance.importances_std
-}).sort_values('importance_mean', ascending=False)
-
-print("Feature Importance Scores:")
-print(feature_importance_df.to_string(index=False))
-
-# Visualization
-plt.figure(figsize=(18, 12))
-
-plt.subplot(2, 3, 1)
-colors = plt.cm.viridis(np.linspace(0, 1, len(feature_importance_df)))
-bars = plt.barh(feature_importance_df['feature'], feature_importance_df['importance_mean'],
-                xerr=feature_importance_df['importance_std'], color=colors)
-plt.xlabel('Permutation Importance')
-plt.title('Feature Importance (Permutation)')
-plt.gca().invert_yaxis()
-
-plt.subplot(2, 3, 2)
-models = list(base_results.keys()) + ['Ensemble']
-accuracies = list(base_results.values()) + [ensemble_accuracy]
-colors = ['lightblue', 'lightgreen', 'lightcoral', 'gold']
-bars = plt.bar(models, accuracies, color=colors)
-plt.ylabel('Accuracy')
-plt.title('Model Comparison')
-plt.ylim(0.7, 0.9)
-for bar, accuracy in zip(bars, accuracies):
-    plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01,
-             f'{accuracy:.3f}', ha='center', va='bottom')
-plt.xticks(rotation=45)
-
-plt.subplot(2, 3, 3)
-cm = confusion_matrix(y_test, y_pred_ensemble)
-sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
-            xticklabels=['Negative', 'Positive'],
-            yticklabels=['Negative', 'Positive'])
-plt.xlabel('Predicted')
-plt.ylabel('Actual')
-plt.title('Confusion Matrix - Ensemble')
-
-plt.subplot(2, 3, 4)
-plt.plot(range(1, 6), cv_scores, 'o-', label='CV Scores')
-plt.axhline(y=cv_scores.mean(), color='r', linestyle='--', label=f'Mean: {cv_scores.mean():.3f}')
-plt.xlabel('Fold')
-plt.ylabel('Accuracy')
-plt.title('Ensemble Cross-Validation Scores')
-plt.legend()
-plt.ylim(0.7, 0.9)
-
-plt.subplot(2, 3, 5)
-best_single_model = max(base_results.items(), key=lambda x: x[1])
-comparison_labels = [f'Best Single ({best_single_model[0]})', 'Ensemble']
-comparison_accuracies = [best_single_model[1], ensemble_accuracy]
-colors = ['lightblue', 'gold']
-bars = plt.bar(comparison_labels, comparison_accuracies, color=colors)
-plt.ylabel('Accuracy')
-plt.title('Ensemble vs Best Single Model')
-plt.ylim(0.7, 0.9)
-for bar, accuracy in zip(bars, comparison_accuracies):
-    plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01,
-             f'{accuracy:.3f}', ha='center', va='bottom')
-
-plt.subplot(2, 3, 6)
-top_features = feature_importance_df.head(5)
-plt.barh(top_features['feature'], top_features['importance_mean'], color='lightgreen')
-plt.xlabel('Importance')
-plt.title('Top 5 Most Important Features')
-plt.gca().invert_yaxis()
-
-plt.tight_layout()
-plt.show()
-
-print("\nSaving the ensemble model and scaler...")
-joblib.dump(ensemble_model, 'ensemble_model.pkl')
-joblib.dump(scaler, 'ensemble_scaler.pkl')
-joblib.dump(list(X_optimized.columns), 'ensemble_features.pkl')
-print("Ensemble model, scaler, and feature names saved successfully!")
-
-print("\n" + "=" * 60)
-print("FINAL ENSEMBLE MODEL INFORMATION")
-print("=" * 60)
-print(f"Best single model: {best_single_model[0]} with accuracy: {best_single_model[1]:.4f}")
-print(f"Ensemble model accuracy: {ensemble_accuracy:.4f}")
-print(f"Improvement: {((ensemble_accuracy - best_single_model[1]) / best_single_model[1] * 100):.2f}%")
-print(f"Number of features: {X_optimized.shape[1]}")
-print(f"Top 3 features: {list(feature_importance_df['feature'].head(3))}")
-
-print("\nSample Predictions with Ensemble Model:")
-sample_indices = np.random.choice(len(X_test), 15, replace=False)
-sample_X = X_test.iloc[sample_indices]
-sample_y_true = y_test.iloc[sample_indices]
-sample_y_pred = ensemble_model.predict(scaler.transform(sample_X))
-
-sample_results = pd.DataFrame({
-    'Actual': sample_y_true.values,
-    'Predicted': sample_y_pred,
-    'Correct': sample_y_true.values == sample_y_pred
-})
-
-print(sample_results.to_string(index=False))
-print(f"\nSample Accuracy: {sample_results['Correct'].mean():.2%}")
-
-print("\nPrediction Probabilities for Sample Cases:")
-sample_probas = ensemble_model.predict_proba(scaler.transform(sample_X.head(5)))
-for i, (true_val, pred_val) in enumerate(zip(sample_y_true.head(5), sample_y_pred.head(5))):
-    print(f"Sample {i+1}: Actual={true_val}, Predicted={pred_val}, "
-          f"Probability=[{sample_probas[i][0]:.3f}, {sample_probas[i][1]:.3f}]")
+# import pandas as pd
+# import numpy as np
+# import matplotlib.pyplot as plt
+# import seaborn as sns
+# from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
+# from sklearn.preprocessing import StandardScaler
+# from sklearn.svm import SVC
+# from sklearn.linear_model import LogisticRegression
+# from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier
+# from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+# from sklearn.inspection import permutation_importance
+# import joblib
+# import time
+# import os
+#
+# print("Removing previous joblib files...")
+# joblib_files = ['optimized_final_model.pkl', 'final_scaler.pkl', 'feature_names.pkl',
+#                 'ensemble_model.pkl', 'ensemble_scaler.pkl', 'ensemble_features.pkl']
+# for file in joblib_files:
+#     if os.path.exists(file):
+#         os.remove(file)
+#         print(f"Removed {file}")
+#
+# df = pd.read_csv('data_akbilgic.csv')
+#
+# df['date'] = pd.to_datetime(df['date'], format='%d-%b-%y')
+#
+# print("Creating optimized features based on importance analysis...")
+#
+# #1. Use important features and eliminate unimportant ones
+# X_optimized = df[['EM', 'EU']].copy()
+#
+# #2. Create an interactive feature
+# X_optimized['EM_EU_interaction'] = X_optimized['EM'] * X_optimized['EU']
+#
+# #3. Create lag features only for important features
+# X_optimized['EM_lag1'] = X_optimized['EM'].shift(1)
+# X_optimized['EM_lag2'] = X_optimized['EM'].shift(2)
+# X_optimized['EU_lag2'] = X_optimized['EU'].shift(2)  # فقط lag2 برای EU
+#
+# #4. Create moving averages
+# X_optimized['EM_MA5'] = X_optimized['EM'].rolling(window=5).mean()
+# X_optimized['EU_MA5'] = X_optimized['EU'].rolling(window=5).mean()
+#
+# #5. Creating new trending features
+# X_optimized['EM_trend'] = X_optimized['EM'] - X_optimized['EM_lag1']
+# X_optimized['EU_trend'] = X_optimized['EU'] - X_optimized['EU_lag2']
+#
+# # Remove NaN values ​​caused by lag and moving average
+# X_optimized = X_optimized.dropna()
+#
+# # Adapting the goal to new features
+# y_optimized = (df['ISE.1'] > 0).astype(int)
+# y_optimized = y_optimized.iloc[len(y_optimized) - len(X_optimized):]
+#
+# # Reset indexes
+# X_optimized = X_optimized.reset_index(drop=True)
+# y_optimized = y_optimized.reset_index(drop=True)
+#
+# print(f"Optimized dataset shape: {X_optimized.shape}")
+# print(f"Features: {list(X_optimized.columns)}")
+#
+# # Data division
+# X_train, X_test, y_train, y_test = train_test_split(
+#     X_optimized, y_optimized, test_size=0.2, random_state=42, stratify=y_optimized
+# )
+#
+# # Standardization
+# scaler = StandardScaler()
+# X_train_scaled = scaler.fit_transform(X_train)
+# X_test_scaled = scaler.transform(X_test)
+#
+# # Create Ensemble model
+# print("\n" + "=" * 60)
+# print("CREATING ENSEMBLE MODEL")
+# print("=" * 60)
+#
+# # Definition of basic models
+# base_models = {
+#     'Logistic Regression': LogisticRegression(C=100, solver='liblinear', random_state=42),
+#     'SVC': SVC(C=10, kernel='linear', probability=True, random_state=42),
+#     'Gradient Boosting': GradientBoostingClassifier(n_estimators=100, random_state=42)
+# }
+#
+# # Create Ensemble Model
+# ensemble_model = VotingClassifier(
+#     estimators=[(name, model) for name, model in base_models.items()],
+#     voting='soft',
+#     n_jobs=-1
+# )
+#
+# # Training and evaluating the Ensemble model
+# print("Training and evaluating ensemble model...")
+#
+# # Cross-Validation
+# cv_scores = cross_val_score(ensemble_model, X_train_scaled, y_train, cv=5, scoring='accuracy')
+# print(f"Ensemble CV Accuracy: {cv_scores.mean():.4f} (±{cv_scores.std() * 2:.4f})")
+#
+# # Final training
+# ensemble_model.fit(X_train_scaled, y_train)
+#
+# # Forecast
+# y_pred_ensemble = ensemble_model.predict(X_test_scaled)
+# ensemble_accuracy = accuracy_score(y_test, y_pred_ensemble)
+#
+# print(f"Ensemble Test Accuracy: {ensemble_accuracy:.4f}")
+# print("\nEnsemble Classification Report:")
+# print(classification_report(y_test, y_pred_ensemble))
+#
+# print("\n" + "=" * 60)
+# print("COMPARISON WITH BASE MODELS")
+# print("=" * 60)
+#
+# base_results = {}
+# for name, model in base_models.items():
+#     model.fit(X_train_scaled, y_train)
+#     y_pred = model.predict(X_test_scaled)
+#     accuracy = accuracy_score(y_test, y_pred)
+#     base_results[name] = accuracy
+#     print(f"{name:25s}: {accuracy:.4f}")
+#
+# print(f"{'Ensemble':25s}: {ensemble_accuracy:.4f}")
+#
+# print("\n" + "=" * 60)
+# print("FEATURE IMPORTANCE ANALYSIS")
+# print("=" * 60)
+#
+# perm_importance = permutation_importance(ensemble_model, X_test_scaled, y_test,
+#                                         n_repeats=10, random_state=42, n_jobs=-1)
+#
+# feature_importance_df = pd.DataFrame({
+#     'feature': X_optimized.columns,
+#     'importance_mean': perm_importance.importances_mean,
+#     'importance_std': perm_importance.importances_std
+# }).sort_values('importance_mean', ascending=False)
+#
+# print("Feature Importance Scores:")
+# print(feature_importance_df.to_string(index=False))
+#
+# # Visualization
+# plt.figure(figsize=(18, 12))
+#
+# plt.subplot(2, 3, 1)
+# colors = plt.cm.viridis(np.linspace(0, 1, len(feature_importance_df)))
+# bars = plt.barh(feature_importance_df['feature'], feature_importance_df['importance_mean'],
+#                 xerr=feature_importance_df['importance_std'], color=colors)
+# plt.xlabel('Permutation Importance')
+# plt.title('Feature Importance (Permutation)')
+# plt.gca().invert_yaxis()
+#
+# plt.subplot(2, 3, 2)
+# models = list(base_results.keys()) + ['Ensemble']
+# accuracies = list(base_results.values()) + [ensemble_accuracy]
+# colors = ['lightblue', 'lightgreen', 'lightcoral', 'gold']
+# bars = plt.bar(models, accuracies, color=colors)
+# plt.ylabel('Accuracy')
+# plt.title('Model Comparison')
+# plt.ylim(0.7, 0.9)
+# for bar, accuracy in zip(bars, accuracies):
+#     plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01,
+#              f'{accuracy:.3f}', ha='center', va='bottom')
+# plt.xticks(rotation=45)
+#
+# plt.subplot(2, 3, 3)
+# cm = confusion_matrix(y_test, y_pred_ensemble)
+# sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+#             xticklabels=['Negative', 'Positive'],
+#             yticklabels=['Negative', 'Positive'])
+# plt.xlabel('Predicted')
+# plt.ylabel('Actual')
+# plt.title('Confusion Matrix - Ensemble')
+#
+# plt.subplot(2, 3, 4)
+# plt.plot(range(1, 6), cv_scores, 'o-', label='CV Scores')
+# plt.axhline(y=cv_scores.mean(), color='r', linestyle='--', label=f'Mean: {cv_scores.mean():.3f}')
+# plt.xlabel('Fold')
+# plt.ylabel('Accuracy')
+# plt.title('Ensemble Cross-Validation Scores')
+# plt.legend()
+# plt.ylim(0.7, 0.9)
+#
+# plt.subplot(2, 3, 5)
+# best_single_model = max(base_results.items(), key=lambda x: x[1])
+# comparison_labels = [f'Best Single ({best_single_model[0]})', 'Ensemble']
+# comparison_accuracies = [best_single_model[1], ensemble_accuracy]
+# colors = ['lightblue', 'gold']
+# bars = plt.bar(comparison_labels, comparison_accuracies, color=colors)
+# plt.ylabel('Accuracy')
+# plt.title('Ensemble vs Best Single Model')
+# plt.ylim(0.7, 0.9)
+# for bar, accuracy in zip(bars, comparison_accuracies):
+#     plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01,
+#              f'{accuracy:.3f}', ha='center', va='bottom')
+#
+# plt.subplot(2, 3, 6)
+# top_features = feature_importance_df.head(5)
+# plt.barh(top_features['feature'], top_features['importance_mean'], color='lightgreen')
+# plt.xlabel('Importance')
+# plt.title('Top 5 Most Important Features')
+# plt.gca().invert_yaxis()
+#
+# plt.tight_layout()
+# plt.show()
+#
+# print("\nSaving the ensemble model and scaler...")
+# joblib.dump(ensemble_model, 'ensemble_model.pkl')
+# joblib.dump(scaler, 'ensemble_scaler.pkl')
+# joblib.dump(list(X_optimized.columns), 'ensemble_features.pkl')
+# print("Ensemble model, scaler, and feature names saved successfully!")
+#
+# print("\n" + "=" * 60)
+# print("FINAL ENSEMBLE MODEL INFORMATION")
+# print("=" * 60)
+# print(f"Best single model: {best_single_model[0]} with accuracy: {best_single_model[1]:.4f}")
+# print(f"Ensemble model accuracy: {ensemble_accuracy:.4f}")
+# print(f"Improvement: {((ensemble_accuracy - best_single_model[1]) / best_single_model[1] * 100):.2f}%")
+# print(f"Number of features: {X_optimized.shape[1]}")
+# print(f"Top 3 features: {list(feature_importance_df['feature'].head(3))}")
+#
+# print("\nSample Predictions with Ensemble Model:")
+# sample_indices = np.random.choice(len(X_test), 15, replace=False)
+# sample_X = X_test.iloc[sample_indices]
+# sample_y_true = y_test.iloc[sample_indices]
+# sample_y_pred = ensemble_model.predict(scaler.transform(sample_X))
+#
+# sample_results = pd.DataFrame({
+#     'Actual': sample_y_true.values,
+#     'Predicted': sample_y_pred,
+#     'Correct': sample_y_true.values == sample_y_pred
+# })
+#
+# print(sample_results.to_string(index=False))
+# print(f"\nSample Accuracy: {sample_results['Correct'].mean():.2%}")
+#
+# print("\nPrediction Probabilities for Sample Cases:")
+# sample_probas = ensemble_model.predict_proba(scaler.transform(sample_X.head(5)))
+# for i, (true_val, pred_val) in enumerate(zip(sample_y_true.head(5), sample_y_pred.head(5))):
+#     print(f"Sample {i+1}: Actual={true_val}, Predicted={pred_val}, "
+#           f"Probability=[{sample_probas[i][0]:.3f}, {sample_probas[i][1]:.3f}]")
